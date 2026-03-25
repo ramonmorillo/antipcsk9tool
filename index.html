@@ -1,1725 +1,228 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herramienta de Prescripción Anti-PCSK9 | Protocolo AGS Sur Sevilla</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .legal-notice {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 30px;
-            font-size: 13px;
-            border-radius: 4px;
-        }
-
-        .legal-notice strong {
-            color: #856404;
-        }
-
-        .tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            overflow-x: auto;
-        }
-
-        .tab {
-            padding: 15px 25px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 14px;
-            font-weight: 500;
-            color: #6c757d;
-            white-space: nowrap;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .tab:hover {
-            background: #e9ecef;
-        }
-
-        .tab.active {
-            color: #667eea;
-            background: white;
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #667eea;
-        }
-
-        .tab.completed::before {
-            content: '✓ ';
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .checkbox-group,
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .checkbox-item,
-        .radio-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .checkbox-item:hover,
-        .radio-item:hover {
-            background: #e9ecef;
-        }
-
-        .checkbox-item input,
-        .radio-item input {
-            margin-right: 10px;
-            margin-top: 3px;
-            width: auto;
-            cursor: pointer;
-        }
-
-        .checkbox-item label,
-        .radio-item label {
-            margin: 0;
-            font-weight: 400;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .subsection {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-
-        .subsection h3 {
-            color: #2c3e50;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        .estatinas-probadas {
-            display: grid;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .estatina-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-        }
-
-        .comorbilidad-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 10px;
-            align-items: center;
-            padding: 10px;
-            background: white;
-            border-radius: 4px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #000;
-        }
-
-        .btn-info {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid;
-        }
-
-        .alert-danger {
-            background: #f8d7da;
-            border-color: #dc3545;
-            color: #721c24;
-        }
-
-        .alert-warning {
-            background: #fff3cd;
-            border-color: #ffc107;
-            color: #856404;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            border-color: #17a2b8;
-            color: #0c5460;
-        }
-
-        .results-container {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .result-card {
-            background: white;
-            padding: 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .result-card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .result-item {
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .result-item strong {
-            color: #495057;
-            display: inline-block;
-            min-width: 150px;
-        }
-
-        .print-only {
-            display: none;
-        }
-
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-
-            .container {
-                box-shadow: none;
-                max-width: 100%;
-            }
-
-            .header {
-                background: white !important;
-                color: black !important;
-                border-bottom: 2px solid #000;
-            }
-
-            .tabs,
-            .btn-group,
-            .legal-notice,
-            .no-print {
-                display: none !important;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            .section {
-                display: block !important;
-                page-break-inside: avoid;
-            }
-
-            .section h2 {
-                page-break-after: avoid;
-                margin-top: 30px;
-                border-bottom: 2px solid #000;
-                padding-bottom: 10px;
-            }
-
-            .result-card {
-                page-break-inside: avoid;
-            }
-
-            .alert, .result-card, .subsection {
-                border: 1px solid #ddd !important;
-                background: white !important;
-            }
-            
-            #print-footer {
-                display: block !important;
-            }
-            
-            /* Título del formulario */
-            body::before {
-                content: "FORMULARIO DE SOLICITUD DE FÁRMACOS CONTRA PCSK9";
-                display: block;
-                font-size: 20px;
-                font-weight: bold;
-                text-align: center;
-                margin: 30px 0;
-                color: #000;
-                page-break-after: avoid;
-            }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .note {
-            background: #e7f3ff;
-            border-left: 4px solid #2196f3;
-            padding: 12px;
-            margin: 15px 0;
-            font-size: 13px;
-            border-radius: 4px;
-        }
-
-        .rule-citation {
-            font-size: 12px;
-            color: #6c757d;
-            font-style: italic;
-            margin-top: 5px;
-        }
-
-        .trazabilidad {
-            background: #fff8dc;
-            border: 1px dashed #ffa500;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 6px;
-        }
-
-        .trazabilidad h4 {
-            color: #ff8c00;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .trazabilidad ul {
-            margin-left: 20px;
-            font-size: 13px;
-        }
-
-        .trazabilidad li {
-            margin-bottom: 5px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Herramienta de Prescripción Anti-PCSK9 | AGS Sur Sevilla</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, Segoe UI, Arial, sans-serif; background: #eef2f6; color: #223; }
+    .container { max-width: 1320px; margin: 16px auto; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #d6dee7; }
+    .header { background: #1d3557; color: #fff; padding: 24px; }
+    .header h1 { font-size: 1.35rem; margin-bottom: 6px; }
+    .header p { opacity: .95; font-size: .92rem; }
+    .legal-notice { margin: 16px 24px; background: #fff4da; border-left: 4px solid #c79400; padding: 12px; border-radius: 6px; font-size: .9rem; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 16px; background: #f6f8fb; border-top: 1px solid #d6dee7; border-bottom: 1px solid #d6dee7; }
+    .tab { border: 1px solid #ccd7e4; background: #fff; color: #244; padding: 10px 14px; border-radius: 7px; cursor: pointer; font-size: .85rem; }
+    .tab.active { background: #1d3557; color: #fff; border-color: #1d3557; }
+    .tab.completed::before { content: "✓ "; color: #0d7a3f; }
+    .layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 0; }
+    .content { padding: 24px; }
+    .sidebar { border-left: 1px solid #d6dee7; background: #f9fbfd; padding: 16px; position: sticky; top: 0; height: fit-content; }
+    .panel { background: #fff; border: 1px solid #dbe4ee; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .panel h3 { font-size: .95rem; margin-bottom: 10px; color: #1d3557; }
+    .summary-item { font-size: .84rem; margin: 5px 0; }
+    .summary-item strong { color: #334; }
+    .save-status { font-size: .8rem; color: #506070; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .section h2 { color: #1d3557; margin-bottom: 18px; font-size: 1.2rem; }
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 14px; }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; font-size: .86rem; }
+    input, select, textarea { width: 100%; border: 1px solid #cdd8e4; border-radius: 6px; padding: 10px; font-size: .9rem; background: #fff; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid #bdd3ee; border-color: #7aa4d4; }
+    .subsection { background: #f7fafd; border: 1px solid #d7e3ef; border-left: 4px solid #4e6f96; border-radius: 7px; padding: 14px; margin-bottom: 14px; }
+    .subsection h3 { margin-bottom: 10px; font-size: 1rem; color: #1f3f66; }
+    .checkbox-group, .radio-group { display: grid; gap: 8px; }
+    .checkbox-item, .radio-item { display: flex; gap: 8px; align-items: start; background: #fff; border: 1px solid #d6e0ec; border-radius: 6px; padding: 8px; }
+    .checkbox-item input, .radio-item input { width: auto; margin-top: 3px; }
+    .estatina-row { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }
+    .comorbilidad-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 8px; background: #fff; padding: 8px; border: 1px solid #d6e0ec; border-radius: 6px; align-items: center; }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .btn { border: none; border-radius: 7px; padding: 10px 14px; font-weight: 600; cursor: pointer; font-size: .86rem; }
+    .btn-primary { background: #1d4c80; color: #fff; }
+    .btn-secondary { background: #607080; color: #fff; }
+    .btn-success { background: #217746; color: #fff; }
+    .btn-warning { background: #b78700; color: #fff; }
+    .btn-info { background: #2f5f8f; color: #fff; }
+    .btn-danger { background: #9a2f2f; color: #fff; }
+    .alert { border-radius: 7px; padding: 12px; margin: 12px 0; border-left: 4px solid; }
+    .alert-info { background: #e5f1fb; border-color: #2f5f8f; }
+    .alert-warning { background: #fff7e3; border-color: #b78700; }
+    .alert-success { background: #e9f7ef; border-color: #217746; }
+    .alert-danger { background: #fbecec; border-color: #9a2f2f; }
+    .results-container,.result-card { background: #fff; border: 1px solid #d4dfeb; border-radius: 8px; padding: 14px; margin: 10px 0; }
+    .result-item { background: #f8fbff; border-radius: 6px; padding: 10px; margin: 8px 0; }
+    .kpi { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 8px; margin-bottom: 10px; }
+    .kpi-card { background: #fff; border: 1px solid #d4dfeb; border-radius: 8px; padding: 10px; font-size: .82rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #d4dfeb; padding: 8px; text-align: left; font-size: .82rem; }
+    th { background: #f3f7fb; }
+    .filters { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 8px; margin: 8px 0; }
+    #pdf-render-area { position: fixed; left: -9999px; top: 0; width: 840px; background: #fff; color: #111; }
+    @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; border-left: 0; border-top: 1px solid #d6dee7; } }
+    @media print { .tabs,.btn-group,.sidebar,.legal-notice,.no-print { display:none !important; } body { background:#fff; } .container { border:0; } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🏥 Herramienta de Prescripción de Fármacos Anti-PCSK9</h1>
-            <p>Protocolo de Manejo de Hipercolesterolemia en el Ámbito Hospitalario</p>
-            <p style="font-size: 12px; margin-top: 5px;">AGS Sur de Sevilla - Actualización Junio 2024</p>
-            <p style="font-size: 11px; margin-top: 10px; opacity: 0.8;">Creado por Ramón Morillo - Febrero 2026</p>
-        </div>
+<div class="container">
+  <div class="header">
+    <h1>Herramienta de Prescripción de Fármacos Anti-PCSK9</h1>
+    <p>Protocolo de Manejo de Hipercolesterolemia en el Ámbito Hospitalario</p>
+    <p>AGS Sur de Sevilla – Actualización Junio 2024 · Creado por Ramón Morillo – Febrero 2026</p>
+  </div>
+  <div class="legal-notice"><strong>⚠️ Aviso legal:</strong> Herramienta de apoyo clínico. No sustituye el juicio clínico ni la validación por la Comisión Asesora Local de Hiperlipidemias.</div>
+  <div class="tabs">
+    <button class="tab active" data-tab="solicitante">1. Solicitante</button><button class="tab" data-tab="paciente">2. Paciente</button><button class="tab" data-tab="indicacion">3. Indicación</button><button class="tab" data-tab="optimizacion">4. Optimización</button><button class="tab" data-tab="intolerancia">5. Ineficacia/Intolerancia</button><button class="tab" data-tab="analitica">6. Analítica</button><button class="tab" data-tab="resultados">7. Resultados</button><button class="tab" data-tab="dashboard">8. Dashboard local</button>
+  </div>
+  <div class="layout">
+    <div class="content">
+      <!-- sections copied with minimal text -->
+      <div class="section active" id="solicitante"><h2>I. Médico Solicitante</h2><div class="form-row"><div class="form-group"><label>Nombre completo *</label><input type="text" id="medico_nombre" required></div><div class="form-group"><label>Especialidad *</label><select id="medico_especialidad" required><option value="">Seleccione...</option><option>Medicina Interna</option><option>Cardiología</option><option>Endocrinología</option><option>Neurología</option><option>Cirugía Vascular</option><option>Otra</option></select></div></div><div class="form-row"><div class="form-group"><label>Teléfono de contacto *</label><input type="tel" id="medico_telefono" required></div><div class="form-group"><label>Fecha de solicitud *</label><input type="date" id="fecha_solicitud" required></div></div><div class="btn-group"><button class="btn btn-primary" onclick="nextTab('paciente')">Siguiente</button><button class="btn btn-warning" onclick="loadExample(1)">Caso demo 1</button><button class="btn btn-warning" onclick="loadExample(2)">Caso demo 2</button><button class="btn btn-warning" onclick="loadExample(3)">Caso demo 3</button><button class="btn btn-secondary" onclick="saveDraftManual()">Guardar borrador</button><button class="btn btn-info" onclick="continueLastDraft()">Continuar último borrador</button><button class="btn btn-danger" onclick="resetForm()">Nueva solicitud</button></div></div>
 
-        <div class="legal-notice">
-            <strong>⚠️ AVISO LEGAL:</strong> Esta herramienta es una ayuda para la decisión clínica basada en el protocolo aprobado. 
-            No sustituye el criterio clínico del profesional sanitario. Todas las decisiones deben ser revisadas y validadas 
-            por el clínico responsable antes de la prescripción y por la Comisión Asesora Local de Hiperlipidemias.
-        </div>
+      <div class="section" id="paciente"><h2>II. Paciente</h2><div class="form-row"><div class="form-group"><label>Nombre y apellidos *</label><input type="text" id="paciente_nombre" required></div><div class="form-group"><label>NUHSA / Historia *</label><input type="text" id="paciente_nuhsa" required></div></div><div class="form-row"><div class="form-group"><label>Fecha nacimiento *</label><input type="date" id="paciente_fecha_nac" required onchange="calcularEdad()"></div><div class="form-group"><label>Edad</label><input type="number" id="paciente_edad" readonly></div></div><div class="btn-group"><button class="btn btn-secondary" onclick="prevTab('solicitante')">Anterior</button><button class="btn btn-primary" onclick="nextTab('indicacion')">Siguiente</button></div></div>
 
-        <div class="tabs">
-            <button class="tab active" data-tab="solicitante">1. Solicitante</button>
-            <button class="tab" data-tab="paciente">2. Paciente</button>
-            <button class="tab" data-tab="indicacion">3. Indicación</button>
-            <button class="tab" data-tab="optimizacion">4. Optimización</button>
-            <button class="tab" data-tab="intolerancia">5. Ineficacia/Intolerancia</button>
-            <button class="tab" data-tab="analitica">6. Datos Analíticos</button>
-            <button class="tab" data-tab="resultados">7. Resultados</button>
-        </div>
+      <div class="section" id="indicacion"><h2>III. Indicación clínica</h2><div class="subsection"><h3>Tipo de prevención</h3><div class="radio-group"><div class="radio-item"><input type="radio" id="ind_prev_primaria" name="tipo_prevencion" value="primaria"><label for="ind_prev_primaria"><strong>Primaria</strong>: HF sin comorbilidades, LDL >100</label></div><div class="radio-item"><input type="radio" id="ind_hf_hetero" name="tipo_prevencion" value="hf_hetero"><label for="ind_hf_hetero"><strong>Secundaria</strong>: HF heterocigota, LDL >100</label></div><div class="radio-item"><input type="radio" id="ind_hf_homo" name="tipo_prevencion" value="hf_homo"><label for="ind_hf_homo"><strong>Secundaria</strong>: HF homocigota, LDL >100</label></div><div class="radio-item"><input type="radio" id="ind_ecv" name="tipo_prevencion" value="ecv"><label for="ind_ecv"><strong>Secundaria</strong>: ECV establecida</label></div></div></div><div class="subsection"><h3>Definición HF</h3><div class="checkbox-group"><div class="checkbox-item"><input type="checkbox" id="hf_dutch"><label for="hf_dutch">≥6 puntos Dutch</label></div><div class="checkbox-item"><input type="checkbox" id="hf_genetico_positivo"><label for="hf_genetico_positivo">Diagnóstico genético positivo</label></div><div class="checkbox-item"><input type="checkbox" id="hf_genetico_indeterminado"><label for="hf_genetico_indeterminado">Genético indeterminado con fenotipo</label></div></div></div><div class="btn-group"><button class="btn btn-secondary" onclick="prevTab('paciente')">Anterior</button><button class="btn btn-primary" onclick="nextTab('optimizacion')">Siguiente</button></div></div>
 
-        <div class="content">
-            <!-- SECCIÓN 1: SOLICITANTE -->
-            <div class="section active" id="solicitante">
-                <h2 style="color: #2c3e50; margin-bottom: 25px;">I. Médico Solicitante</h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nombre completo *</label>
-                        <input type="text" id="medico_nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Especialidad *</label>
-                        <select id="medico_especialidad" required>
-                            <option value="">Seleccione...</option>
-                            <option value="Medicina Interna">Medicina Interna</option>
-                            <option value="Cardiología">Cardiología</option>
-                            <option value="Endocrinología">Endocrinología</option>
-                            <option value="Neurología">Neurología</option>
-                            <option value="Cirugía Vascular">Cirugía Vascular</option>
-                            <option value="Otra">Otra</option>
-                        </select>
-                    </div>
-                </div>
+      <div class="section" id="optimizacion"><h2>IV. Optimización previa</h2><div class="subsection"><h3>Estatina alta potencia</h3><div class="form-group"><label>¿Dosis máxima tolerada? *</label><select id="estatina_max_dosis" required onchange="updateEstatina()"><option value="">Seleccione...</option><option value="si">Sí</option><option value="no">No</option><option value="intolerancia">No por intolerancia</option><option value="contraindicacion">No por contraindicación</option></select></div><div id="estatina_detalle" style="display:none;"><div class="form-group"><label>Estatina actual</label><select id="estatina_tipo"><option value="">Seleccione...</option><option value="rosuvastatina_20">Rosuvastatina 20 mg</option><option value="rosuvastatina_40">Rosuvastatina 40 mg</option><option value="atorvastatina_80">Atorvastatina 80 mg</option><option value="otra">Otra</option></select></div></div></div><div class="subsection"><h3>Otros hipolipemiantes</h3><div class="form-row"><div class="form-group"><label>Ezetimibe</label><select id="ezetimibe"><option value="no">No</option><option value="si">Sí</option><option value="intolerancia">No, intolerancia</option><option value="contraindicacion">No, contraindicación</option></select></div><div class="form-group"><label>Dosis</label><input id="ezetimibe_dosis"></div></div><div class="form-row"><div class="form-group"><label>Ácido bempedoico</label><select id="bempedoico"><option value="no">No</option><option value="si">Sí</option><option value="intolerancia">No, intolerancia</option><option value="contraindicacion">No, contraindicación</option></select></div><div class="form-group"><label>Dosis</label><input id="bempedoico_dosis"></div></div></div><div class="subsection"><h3>Adherencia</h3><div class="form-group"><label>Adherencia confirmada *</label><select id="adherencia" required><option value="">Seleccione...</option><option value="si">Sí</option><option value="no">No</option></select></div><div class="checkbox-group"><div class="checkbox-item"><input type="checkbox" id="adherencia_receta"><label for="adherencia_receta">Receta XXI</label></div><div class="checkbox-item"><input type="checkbox" id="adherencia_ldl"><label for="adherencia_ldl">Histórico LDL</label></div><div class="checkbox-item"><input type="checkbox" id="adherencia_entrevista"><label for="adherencia_entrevista">Entrevista</label></div></div></div><div class="btn-group"><button class="btn btn-secondary" onclick="prevTab('indicacion')">Anterior</button><button class="btn btn-primary" onclick="nextTab('intolerancia')">Siguiente</button></div></div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Teléfono de contacto *</label>
-                        <input type="tel" id="medico_telefono" placeholder="Ej: 955015000" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de solicitud *</label>
-                        <input type="date" id="fecha_solicitud" required>
-                    </div>
-                </div>
+      <div class="section" id="intolerancia"><h2>V. Ineficacia / Intolerancia</h2><div class="subsection"><h3>Justificación</h3><div class="radio-group"><div class="radio-item"><input type="radio" id="just_ineficacia" name="justificacion" value="ineficacia" onchange="updateJustificacion()"><label for="just_ineficacia">Ineficacia</label></div><div class="radio-item"><input type="radio" id="just_intolerancia" name="justificacion" value="intolerancia" onchange="updateJustificacion()"><label for="just_intolerancia">Intolerancia</label></div><div class="radio-item"><input type="radio" id="just_contraindicacion" name="justificacion" value="contraindicacion" onchange="updateJustificacion()"><label for="just_contraindicacion">Contraindicación</label></div><div class="radio-item"><input type="radio" id="just_ninguna" name="justificacion" value="ninguna" onchange="updateJustificacion()"><label for="just_ninguna">No aplica</label></div></div></div><div id="intolerancia_detalle" style="display:none;"><div class="subsection"><h3>3 estatinas probadas</h3><div class="estatina-row"><input id="estatina_prob_1" placeholder="Estatina 1"><input id="estatina_prob_1_dosis" placeholder="Dosis"></div><div class="estatina-row"><input id="estatina_prob_2" placeholder="Estatina 2"><input id="estatina_prob_2_dosis" placeholder="Dosis"></div><div class="estatina-row"><input id="estatina_prob_3" placeholder="Estatina 3"><input id="estatina_prob_3_dosis" placeholder="Dosis"></div></div><div class="subsection"><h3>Síntomas</h3><div class="checkbox-group"><div class="checkbox-item"><input type="checkbox" id="sint_mialgias"><label for="sint_mialgias">Mialgias</label></div><div class="checkbox-item"><input type="checkbox" id="sint_cpk"><label for="sint_cpk">CPK >500</label></div><div class="checkbox-item"><input type="checkbox" id="sint_gi"><label for="sint_gi">GI limitantes</label></div><div class="checkbox-item"><input type="checkbox" id="sint_hepatico"><label for="sint_hepatico">AST/ALT elevadas</label></div></div></div></div><div class="btn-group"><button class="btn btn-secondary" onclick="prevTab('optimizacion')">Anterior</button><button class="btn btn-primary" onclick="nextTab('analitica')">Siguiente</button></div></div>
 
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="nextTab('paciente')">Siguiente →</button>
-                    <button class="btn btn-warning" onclick="loadExample(1)">📋 Ejemplo 1: HF Homocigota</button>
-                    <button class="btn btn-warning" onclick="loadExample(2)">📋 Ejemplo 2: ECV + Evento</button>
-                    <button class="btn btn-warning" onclick="loadExample(3)">📋 Ejemplo 3: No Elegible</button>
-                </div>
-            </div>
+      <div class="section" id="analitica"><h2>VI. Datos clínicos y analíticos</h2><div class="subsection"><h3>LDL</h3><div class="form-row"><div class="form-group"><label>LDL actual *</label><input type="number" id="ldl_actual" required onchange="calcularObjetivo()"></div><div class="form-group"><label>LDL objetivo *</label><select id="ldl_objetivo" required><option value="">Seleccione...</option><option value="55">&lt;55</option><option value="40">&lt;40</option><option value="100">&lt;100</option><option value="70">&lt;70</option><option value="55_hf">&lt;55 (HF)</option></select></div></div></div><div class="subsection"><h3>Comorbilidades</h3><div class="comorbilidad-row"><label>Cardiopatía isquémica</label><select id="comorb_cardio"><option value="no">No</option><option value="si">Sí</option></select><input type="number" id="comorb_cardio_año" placeholder="Año" min="1950" max="2026"></div><div class="comorbilidad-row"><label>Enf. cerebrovascular</label><select id="comorb_cerebro"><option value="no">No</option><option value="si">Sí</option></select><input type="number" id="comorb_cerebro_año" placeholder="Año" min="1950" max="2026"></div><div class="comorbilidad-row"><label>Arteriopatía periférica</label><select id="comorb_arterio"><option value="no">No</option><option value="si">Sí</option></select><input type="number" id="comorb_arterio_año" placeholder="Año" min="1950" max="2026"></div><div class="comorbilidad-row"><label>Ateromatosis</label><select id="comorb_atero"><option value="no">No</option><option value="si">Sí</option></select><input type="number" id="comorb_atero_año" placeholder="Año" min="1950" max="2026"></div><div class="form-group"><label>Otras</label><textarea id="comorb_otras"></textarea></div></div><div class="subsection"><h3>Excepción</h3><div class="form-row"><div class="form-group"><label>Evento CV último año</label><select id="evento_ultimo_año"><option value="no">No</option><option value="si">Sí</option></select></div><div class="form-group"><label>¿LDL &gt;150?</label><select id="ldl_mayor_150"><option value="">Auto</option><option value="si">Sí</option><option value="no">No</option></select></div></div></div><div class="btn-group"><button class="btn btn-secondary" onclick="prevTab('intolerancia')">Anterior</button><button class="btn btn-success" onclick="calcularResultados()">Calcular elegibilidad</button></div><div id="clinical_warnings"></div></div>
 
-            <!-- SECCIÓN 2: PACIENTE -->
-            <div class="section" id="paciente">
-                <h2 style="color: #2c3e50; margin-bottom: 25px;">II. Datos de Filiación del Paciente</h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nombre y apellidos del paciente *</label>
-                        <input type="text" id="paciente_nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label>NUHSA / Nº Historia Clínica *</label>
-                        <input type="text" id="paciente_nuhsa" required>
-                    </div>
-                </div>
+      <div class="section" id="resultados"><h2>VII. Resultado final</h2><div id="results_content"><div class="alert alert-info">Complete y calcule para ver resultado.</div></div><div class="btn-group no-print"><button class="btn btn-secondary" onclick="prevTab('analitica')">Anterior</button><button class="btn btn-success" onclick="downloadPdf()">Descargar PDF</button><button class="btn btn-info" onclick="copyClinicalSummary()">Copiar resumen clínico</button><button class="btn btn-info" onclick="copyCommissionJustification()">Copiar justificación para comisión</button><button class="btn btn-secondary" onclick="saveRequest('completada')">Guardar solicitud</button><button class="btn btn-danger" onclick="resetForm()">Nueva solicitud</button></div></div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Fecha de nacimiento *</label>
-                        <input type="date" id="paciente_fecha_nac" onchange="calcularEdad()" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Edad (años)</label>
-                        <input type="number" id="paciente_edad" readonly style="background: #e9ecef;">
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="prevTab('solicitante')">← Anterior</button>
-                    <button class="btn btn-primary" onclick="nextTab('indicacion')">Siguiente →</button>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 3: INDICACIÓN CLÍNICA -->
-            <div class="section" id="indicacion">
-                <h2 style="color: #2c3e50; margin-bottom: 25px;">III. Indicación para la que se Solicita el Fármaco</h2>
-                
-                <div class="note">
-                    <strong>NOTA IMPORTANTE:</strong> El paciente debe estar en tratamiento con la dosis máxima tolerada de estatinas de alta potencia 
-                    (rosuvastatina 20-40 mg o atorvastatina 80 mg) y recomendación de otros hipolipemiantes que puedan llevar al paciente a objetivo 
-                    terapéutico (ezetimibe, ácido bempedoico...) o presentar intolerancia o contraindicación para el uso de los hipolipemiantes convencionales.
-                </div>
-
-                <div class="subsection">
-                    <h3>Tipo de Prevención y Diagnóstico</h3>
-                    <div class="radio-group">
-                        <div class="radio-item">
-                            <input type="radio" id="ind_prev_primaria" name="tipo_prevencion" value="primaria" onchange="updateIndicacion()">
-                            <label for="ind_prev_primaria">
-                                <strong>PREVENCIÓN PRIMARIA:</strong> Hipercolesterolemia familiar sin comorbilidades con C-LDL superior a 100 mg/dl
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="ind_hf_hetero" name="tipo_prevencion" value="hf_hetero" onchange="updateIndicacion()">
-                            <label for="ind_hf_hetero">
-                                <strong>PREVENCIÓN SECUNDARIA:</strong> Hipercolesterolemia familiar heterocigota con C-LDL superior a 100 mg/dl
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="ind_hf_homo" name="tipo_prevencion" value="hf_homo" onchange="updateIndicacion()">
-                            <label for="ind_hf_homo">
-                                <strong>PREVENCIÓN SECUNDARIA:</strong> Hipercolesterolemia familiar homocigota con C-LDL superior a 100 mg/dl
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="ind_ecv" name="tipo_prevencion" value="ecv" onchange="updateIndicacion()">
-                            <label for="ind_ecv">
-                                <strong>PREVENCIÓN SECUNDARIA:</strong> Enfermedad cardiovascular establecida (cardiopatía isquémica, enfermedad cerebrovascular isquémica, enfermedad arterial periférica) que no alcanzan LDL menor a 100 mg/dl
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="subsection">
-                    <h3>Definición de Hipercolesterolemia Familiar (si aplica)</h3>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="hf_dutch" value="dutch">
-                            <label for="hf_dutch">6 o más puntos en Escala de Lípidos de Clínicas Holandesas</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="hf_genetico_positivo" value="genetico_positivo">
-                            <label for="hf_genetico_positivo">Diagnóstico genético positivo</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="hf_genetico_indeterminado" value="genetico_indeterminado">
-                            <label for="hf_genetico_indeterminado">Diagnóstico genético indeterminado con fenotipo compatible</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="prevTab('paciente')">← Anterior</button>
-                    <button class="btn btn-primary" onclick="nextTab('optimizacion')">Siguiente →</button>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 4: OPTIMIZACIÓN PREVIA -->
-            <div class="section" id="optimizacion">
-                <h2 style="color: #2c3e50; margin-bottom: 25px;">IV. Datos de Tratamiento Hipolipemiante Actual</h2>
-                
-                <div class="alert alert-warning">
-                    <strong>⚠️ OBLIGATORIO:</strong> Debe documentarse optimización máxima tolerada antes de iniciar anti-PCSK9, 
-                    salvo intolerancia o contraindicación justificada.
-                </div>
-
-                <div class="subsection">
-                    <h3>Estatinas de Alta Potencia</h3>
-                    <div class="form-group">
-                        <label>¿Paciente en dosis máxima tolerada de estatina de alta potencia? *</label>
-                        <select id="estatina_max_dosis" onchange="updateEstatina()" required>
-                            <option value="">Seleccione...</option>
-                            <option value="si">Sí, en dosis máxima tolerada</option>
-                            <option value="no">No</option>
-                            <option value="intolerancia">No, por intolerancia justificada</option>
-                            <option value="contraindicacion">No, por contraindicación</option>
-                        </select>
-                    </div>
-
-                    <div id="estatina_detalle" style="display:none;">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Estatina actual</label>
-                                <select id="estatina_tipo">
-                                    <option value="">Seleccione...</option>
-                                    <option value="rosuvastatina_20">Rosuvastatina 20 mg</option>
-                                    <option value="rosuvastatina_40">Rosuvastatina 40 mg</option>
-                                    <option value="atorvastatina_80">Atorvastatina 80 mg</option>
-                                    <option value="otra">Otra (especificar en observaciones)</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="subsection">
-                    <h3>Otros Hipolipemiantes</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>¿Ezetimibe?</label>
-                            <select id="ezetimibe">
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                                <option value="intolerancia">No, por intolerancia</option>
-                                <option value="contraindicacion">No, por contraindicación</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Dosis ezetimibe (si aplica)</label>
-                            <input type="text" id="ezetimibe_dosis" placeholder="Ej: 10 mg/día">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>¿Ácido bempedoico?</label>
-                            <select id="bempedoico">
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                                <option value="intolerancia">No, por intolerancia</option>
-                                <option value="contraindicacion">No, por contraindicación</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Dosis ácido bempedoico (si aplica)</label>
-                            <input type="text" id="bempedoico_dosis" placeholder="Ej: 180 mg/día">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="subsection">
-                    <h3>Adherencia Terapéutica</h3>
-                    <div class="form-group">
-                        <label>¿Se ha confirmado adecuada adherencia a la medicación? *</label>
-                        <select id="adherencia" required>
-                            <option value="">Seleccione...</option>
-                            <option value="si">Sí, adherencia confirmada</option>
-                            <option value="no">No se puede confirmar</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Fuentes de verificación de adherencia (marcar las utilizadas)</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="adherencia_receta" value="receta">
-                                <label for="adherencia_receta">Dispensaciones en Receta XXI</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="adherencia_ldl" value="ldl">
-                                <label for="adherencia_ldl">Histórico de niveles de LDL compatibles con adherencia</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="adherencia_entrevista" value="entrevista">
-                                <label for="adherencia_entrevista">Entrevista clínica con el paciente</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="prevTab('indicacion')">← Anterior</button>
-                    <button class="btn btn-primary" onclick="nextTab('intolerancia')">Siguiente →</button>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 5: INEFICACIA/INTOLERANCIA -->
-            <div class="section" id="intolerancia">
-                <h2 style="color: #2c3e50; margin-bottom: 25px;">V. Ineficacia/Intolerancia a Estatinas</h2>
-                
-                <div class="note">
-                    Esta sección documenta si existe ineficacia o intolerancia a estatinas según las definiciones del protocolo.
-                </div>
-
-                <div class="subsection">
-                    <h3>Tipo de Justificación</h3>
-                    <div class="radio-group">
-                        <div class="radio-item">
-                            <input type="radio" id="just_ineficacia" name="justificacion" value="ineficacia" onchange="updateJustificacion()">
-                            <label for="just_ineficacia">
-                                <strong>INEFICACIA:</strong> No alcanzar objetivos de LDL-c para su grupo de riesgo tras tratamiento con 
-                                Atorvastatina 80mg o Rosuvastatina 20 mg tras 4 o más semanas de tratamiento
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="just_intolerancia" name="justificacion" value="intolerancia" onchange="updateJustificacion()">
-                            <label for="just_intolerancia">
-                                <strong>INTOLERANCIA:</strong> Tras intento terapéutico con 3 estatinas diferentes (incluyendo pitavastatina, 
-                                rosuvastatina o pravastatina) con aparición de síntomas limitantes
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="just_contraindicacion" name="justificacion" value="contraindicacion" onchange="updateJustificacion()">
-                            <label for="just_contraindicacion">
-                                <strong>CONTRAINDICACIÓN:</strong> Contraindicación absoluta para el uso de estatinas
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="just_ninguna" name="justificacion" value="ninguna" onchange="updateJustificacion()">
-                            <label for="just_ninguna">
-                                No aplica / Paciente tolera y responde a estatinas
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="intolerancia_detalle" style="display:none;">
-                    <div class="subsection">
-                        <h3>Estatinas Probadas (mínimo 3, incluyendo pitavastatina, rosuvastatina o pravastatina)</h3>
-                        <div class="estatinas-probadas">
-                            <div class="estatina-row">
-                                <div class="form-group">
-                                    <label>Estatina 1 *</label>
-                                    <input type="text" id="estatina_prob_1" placeholder="Ej: Atorvastatina">
-                                </div>
-                                <div class="form-group">
-                                    <label>Dosis *</label>
-                                    <input type="text" id="estatina_prob_1_dosis" placeholder="Ej: 20 mg">
-                                </div>
-                            </div>
-                            <div class="estatina-row">
-                                <div class="form-group">
-                                    <label>Estatina 2 *</label>
-                                    <input type="text" id="estatina_prob_2" placeholder="Ej: Rosuvastatina">
-                                </div>
-                                <div class="form-group">
-                                    <label>Dosis *</label>
-                                    <input type="text" id="estatina_prob_2_dosis" placeholder="Ej: 10 mg">
-                                </div>
-                            </div>
-                            <div class="estatina-row">
-                                <div class="form-group">
-                                    <label>Estatina 3 *</label>
-                                    <input type="text" id="estatina_prob_3" placeholder="Ej: Pitavastatina">
-                                </div>
-                                <div class="form-group">
-                                    <label>Dosis *</label>
-                                    <input type="text" id="estatina_prob_3_dosis" placeholder="Ej: 4 mg">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="subsection">
-                        <h3>Síntomas de Intolerancia (marcar los que apliquen)</h3>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="sint_mialgias" value="mialgias">
-                                <label for="sint_mialgias">Mialgias de nueva aparición que mejoran tras suspensión del fármaco (con o sin aumento de CPK)</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="sint_cpk" value="cpk">
-                                <label for="sint_cpk">Aumento de CPK > 500 asintomático y mantenido</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="sint_gi" value="gi">
-                                <label for="sint_gi">Trastornos gastrointestinales limitantes</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="sint_hepatico" value="hepatico">
-                                <label for="sint_hepatico">Alteración de la función hepática (AST/ALT ≥ 3 veces los valores normales)</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="prevTab('optimizacion')">← Anterior</button>
-                    <button class="btn btn-primary" onclick="nextTab('analitica')">Siguiente →</button>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 6: DATOS ANALÍTICOS -->
-            <div class="section" id="analitica">
-                <h2 style="color: #2c3e50; margin-bottom: 25px;">VI. Datos Clínicos y Analíticos</h2>
-                
-                <div class="subsection">
-                    <h3>Valores de LDL-colesterol</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>LDL-c actual (mg/dl) tras 1 mes de optimización a dosis máximas toleradas *</label>
-                            <input type="number" id="ldl_actual" step="0.1" required onchange="calcularObjetivo()">
-                        </div>
-                        <div class="form-group">
-                            <label>LDL-c objetivo según protocolo (mg/dl)</label>
-                            <select id="ldl_objetivo" required>
-                                <option value="">Seleccione según indicación...</option>
-                                <option value="55">< 55 mg/dl (Prevención secundaria estándar)</option>
-                                <option value="40">< 40 mg/dl (Prevención secundaria con evento estando en objetivo)</option>
-                                <option value="100">< 100 mg/dl (HF sin comorbilidades)</option>
-                                <option value="70">< 70 mg/dl (HF con comorbilidades moderadas)</option>
-                                <option value="55_hf">< 55 mg/dl (HF con alto riesgo/múltiples comorbilidades)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="note">
-                        <strong>Objetivos según protocolo:</strong><br>
-                        • Prevención secundaria: LDL objetivo < 55 mg/dl (o menor si ha tenido evento cardiovascular encontrándose ya en objetivo)<br>
-                        • Hipercolesterolemia familiar: según comorbilidades < 100, 70 o 55 mg/dl
-                    </div>
-                </div>
-
-                <div class="subsection">
-                    <h3>Comorbilidades Cardiovasculares</h3>
-                    <p style="margin-bottom: 15px; font-size: 14px;">Marcar las que apliquen e indicar año aproximado del evento si se conoce:</p>
-                    
-                    <div class="comorbilidad-row">
-                        <label><strong>Cardiopatía isquémica</strong></label>
-                        <select id="comorb_cardio">
-                            <option value="no">No</option>
-                            <option value="si">Sí</option>
-                        </select>
-                        <input type="number" id="comorb_cardio_año" placeholder="Año" min="1950" max="2026">
-                    </div>
-                    
-                    <div class="comorbilidad-row">
-                        <label><strong>Enfermedad cerebrovascular</strong></label>
-                        <select id="comorb_cerebro">
-                            <option value="no">No</option>
-                            <option value="si">Sí</option>
-                        </select>
-                        <input type="number" id="comorb_cerebro_año" placeholder="Año" min="1950" max="2026">
-                    </div>
-                    
-                    <div class="comorbilidad-row">
-                        <label><strong>Arteriopatía periférica</strong></label>
-                        <select id="comorb_arterio">
-                            <option value="no">No</option>
-                            <option value="si">Sí</option>
-                        </select>
-                        <input type="number" id="comorb_arterio_año" placeholder="Año" min="1950" max="2026">
-                    </div>
-                    
-                    <div class="comorbilidad-row">
-                        <label><strong>Ateromatosis aórtica y/o carotídea</strong></label>
-                        <select id="comorb_atero">
-                            <option value="no">No</option>
-                            <option value="si">Sí</option>
-                        </select>
-                        <input type="number" id="comorb_atero_año" placeholder="Año" min="1950" max="2026">
-                    </div>
-
-                    <div class="form-group" style="margin-top: 15px;">
-                        <label>Otras comorbilidades relevantes</label>
-                        <textarea id="comorb_otras" placeholder="Especifique otras comorbilidades cardiovasculares relevantes..."></textarea>
-                    </div>
-                </div>
-
-                <div class="subsection">
-                    <h3>Criterios para Excepción de Dosis Altas Iniciales</h3>
-                    <p style="margin-bottom: 15px; font-size: 14px;">
-                        Pacientes con ECV establecida + LDL > 150 mg/dl + evento CV último año pueden iniciar directamente dosis altas:
-                    </p>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>¿Evento cardiovascular en el último año?</label>
-                            <select id="evento_ultimo_año">
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>¿LDL > 150 mg/dl?</label>
-                            <select id="ldl_mayor_150">
-                                <option value="">Se calculará automáticamente</option>
-                                <option value="si">Sí</option>
-                                <option value="no">No</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="prevTab('intolerancia')">← Anterior</button>
-                    <button class="btn btn-success" onclick="calcularResultados()">🔍 Calcular Elegibilidad y Recomendación</button>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 7: RESULTADOS -->
-            <div class="section" id="resultados">
-                <h2 style="color: #2c3e50; margin-bottom: 25px;">VII. Resultados del Análisis</h2>
-                
-                <div class="note" style="background: #d1ecf1; border-left: 4px solid #17a2b8;">
-                    <strong>💡 IMPORTANTE - Cómo obtener el informe en PDF:</strong><br>
-                    1. Haga clic en el botón "📥 Descargar Informe (HTML)" al final de esta página<br>
-                    2. Se descargará un archivo HTML con todos los datos<br>
-                    3. Abra ese archivo en Chrome/Firefox/Edge<br>
-                    4. Pulse <strong>Ctrl+P</strong> (Windows) o <strong>Cmd+P</strong> (Mac)<br>
-                    5. Seleccione "Guardar como PDF" como destino<br>
-                    <small style="color: #0c5460;">El archivo descargado incluirá automáticamente todas las secciones en formato imprimible profesional.</small>
-                </div>
-                
-                <div id="results_content">
-                    <div class="alert alert-info">
-                        Complete todas las secciones anteriores y pulse "Calcular Elegibilidad y Recomendación" para ver los resultados.
-                    </div>
-                </div>
-
-                <div class="btn-group no-print" style="margin-top: 30px;">
-                    <button class="btn btn-secondary" onclick="prevTab('analitica')">← Anterior</button>
-                    <button class="btn btn-success" onclick="descargarInforme()">📥 Descargar Informe (HTML)</button>
-                    <button class="btn btn-info" onclick="resetForm()">🔄 Nueva Solicitud</button>
-                </div>
-                
-                <div class="note no-print" style="margin-top: 20px; background: #e7f3ff;">
-                    <strong>📋 Cómo generar el PDF:</strong><br>
-                    1. Haga clic en "📥 Descargar Informe (HTML)"<br>
-                    2. Abra el archivo descargado en su navegador (Chrome, Firefox, Edge)<br>
-                    3. Pulse <strong>Ctrl+P</strong> y seleccione "Guardar como PDF"
-                </div>
-            </div>
-        </div>
+      <div class="section" id="dashboard"><h2>VIII. Dashboard local de solicitudes</h2><div class="kpi" id="dashboard_kpi"></div><div class="filters"><select id="filter_estado" onchange="renderDashboard()"><option value="">Estado (todos)</option><option value="borrador">Borrador</option><option value="completada">Completada</option><option value="revisada">Revisada</option></select><select id="filter_especialidad" onchange="renderDashboard()"><option value="">Especialidad (todas)</option></select><select id="filter_elegibilidad" onchange="renderDashboard()"><option value="">Elegibilidad (todas)</option><option value="Elegible">Elegible</option><option value="No elegible">No elegible</option><option value="Revisión manual recomendada">Revisión manual recomendada</option></select><input id="filter_search" placeholder="Buscar paciente / NUHSA" oninput="renderDashboard()"></div><div style="overflow:auto;"><table><thead><tr><th>Fecha</th><th>Paciente</th><th>NUHSA</th><th>Solicitante</th><th>Especialidad</th><th>Indicación</th><th>LDL</th><th>Elegibilidad</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="dashboard_rows"></tbody></table></div><div class="btn-group"><button class="btn btn-secondary" onclick="nextTab('solicitante')">Volver al formulario</button></div></div>
     </div>
-
-    <!-- Footer para impresión -->
-    <div id="print-footer" style="display: none;">
-        <div style="margin-top: 50px; padding: 20px; border-top: 2px solid #ccc; page-break-inside: avoid;">
-            <p><strong>Fecha de generación del informe:</strong> <span id="fecha_generacion"></span></p>
-            <p style="margin-top: 20px; font-size: 12px; color: #666;">
-                Este informe ha sido generado automáticamente por la herramienta de prescripción de anti-PCSK9 basada en el 
-                Protocolo de Manejo de Fármacos para Hipercolesterolemia en el Ámbito Hospitalario (AGS Sur de Sevilla, Actualización Junio 2024).
-                Debe ser revisado y validado por el clínico responsable y la Comisión Asesora Local de Hiperlipidemias.
-            </p>
-            <p style="margin-top: 20px; font-size: 11px; color: #999; text-align: center;">
-                Herramienta creada por Ramón Morillo - Febrero 2026
-            </p>
-        </div>
-    </div>
-
-    <script>
-        // ==================== NAVEGACIÓN ====================
-        function nextTab(tabName) {
-            if (!validateCurrentTab()) {
-                return;
-            }
-            
-            const currentTab = document.querySelector('.section.active');
-            const currentTabButton = document.querySelector('.tab.active');
-            
-            currentTab.classList.remove('active');
-            currentTabButton.classList.remove('active');
-            currentTabButton.classList.add('completed');
-            
-            document.getElementById(tabName).classList.add('active');
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            
-            window.scrollTo(0, 0);
-        }
-
-        function prevTab(tabName) {
-            const currentTab = document.querySelector('.section.active');
-            const currentTabButton = document.querySelector('.tab.active');
-            
-            currentTab.classList.remove('active');
-            currentTabButton.classList.remove('active');
-            
-            document.getElementById(tabName).classList.add('active');
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            
-            window.scrollTo(0, 0);
-        }
-
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const targetTab = this.dataset.tab;
-                const currentTab = document.querySelector('.section.active');
-                
-                currentTab.classList.remove('active');
-                document.querySelector('.tab.active').classList.remove('active');
-                
-                document.getElementById(targetTab).classList.add('active');
-                this.classList.add('active');
-                
-                window.scrollTo(0, 0);
-            });
-        });
-
-        // ==================== VALIDACIONES ====================
-        function validateCurrentTab() {
-            const currentSection = document.querySelector('.section.active');
-            const requiredInputs = currentSection.querySelectorAll('[required]');
-            
-            for (let input of requiredInputs) {
-                if (!input.value || input.value === '') {
-                    alert(`Por favor, complete el campo: ${input.previousElementSibling?.textContent || 'Campo requerido'}`);
-                    input.focus();
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // ==================== FUNCIONES AUXILIARES ====================
-        function calcularEdad() {
-            const fechaNac = document.getElementById('paciente_fecha_nac').value;
-            if (fechaNac) {
-                const hoy = new Date();
-                const nacimiento = new Date(fechaNac);
-                let edad = hoy.getFullYear() - nacimiento.getFullYear();
-                const mes = hoy.getMonth() - nacimiento.getMonth();
-                
-                if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-                    edad--;
-                }
-                
-                document.getElementById('paciente_edad').value = edad;
-            }
-        }
-
-        function updateEstatina() {
-            const seleccion = document.getElementById('estatina_max_dosis').value;
-            const detalle = document.getElementById('estatina_detalle');
-            
-            if (seleccion === 'si') {
-                detalle.style.display = 'block';
-            } else {
-                detalle.style.display = 'none';
-            }
-        }
-
-        function updateIndicacion() {
-            // Aquí se podría agregar lógica adicional si es necesario
-        }
-
-        function updateJustificacion() {
-            const justificacion = document.querySelector('input[name="justificacion"]:checked')?.value;
-            const detalle = document.getElementById('intolerancia_detalle');
-            
-            if (justificacion === 'intolerancia') {
-                detalle.style.display = 'block';
-            } else {
-                detalle.style.display = 'none';
-            }
-        }
-
-        function calcularObjetivo() {
-            const ldlActual = parseFloat(document.getElementById('ldl_actual').value);
-            const ldlMayor150 = document.getElementById('ldl_mayor_150');
-            
-            if (ldlActual && ldlActual > 150) {
-                ldlMayor150.value = 'si';
-            } else if (ldlActual) {
-                ldlMayor150.value = 'no';
-            }
-        }
-
-        // ==================== MOTOR DE DECISIÓN ====================
-        function calcularResultados() {
-            const resultados = {
-                elegible: true,
-                motivos_no_elegible: [],
-                advertencias: [],
-                recomendacion_farmaco: '',
-                dosis_inicial: '',
-                pauta: '',
-                justificacion: '',
-                seguimiento: [],
-                alertas: [],
-                trazabilidad: []
-            };
-
-            // 1. VALIDAR OPTIMIZACIÓN PREVIA
-            const estatinaDosis = document.getElementById('estatina_max_dosis').value;
-            const adherencia = document.getElementById('adherencia').value;
-            const justificacion = document.querySelector('input[name="justificacion"]:checked')?.value;
-
-            if (estatinaDosis === 'no' && justificacion !== 'intolerancia' && justificacion !== 'contraindicacion') {
-                resultados.elegible = false;
-                resultados.motivos_no_elegible.push('Falta optimización: paciente no está en dosis máxima tolerada de estatina de alta potencia sin justificación de intolerancia o contraindicación.');
-                resultados.trazabilidad.push('Protocolo página 2: "El paciente debe estar en tratamiento con la dosis máxima tolerada de estatinas de alta potencia"');
-            }
-
-            if (adherencia !== 'si') {
-                resultados.elegible = false;
-                resultados.motivos_no_elegible.push('No se ha confirmado adherencia terapéutica adecuada. Requisito obligatorio según protocolo.');
-                resultados.trazabilidad.push('Protocolo página 2: "El facultativo debe asegurar una adecuada adherencia a la medicación"');
-            }
-
-            // 2. VALIDAR INDICACIÓN Y UMBRAL LDL
-            const tipoPrevencion = document.querySelector('input[name="tipo_prevencion"]:checked')?.value;
-            const ldlActual = parseFloat(document.getElementById('ldl_actual').value) || 0;
-
-            if (!tipoPrevencion) {
-                resultados.elegible = false;
-                resultados.motivos_no_elegible.push('No se ha seleccionado ninguna indicación clínica.');
-            } else {
-                // Todas las indicaciones requieren LDL > 100 mg/dl para solicitud inicial según protocolo
-                if (ldlActual <= 100) {
-                    resultados.elegible = false;
-                    resultados.motivos_no_elegible.push(`LDL actual (${ldlActual} mg/dl) no cumple el umbral mínimo de > 100 mg/dl requerido para la indicación seleccionada.`);
-                    resultados.trazabilidad.push('Protocolo página 2-3: Todas las indicaciones requieren C-LDL superior a 100 mg/dl');
-                }
-            }
-
-            // 3. VALIDAR INTOLERANCIA SI APLICA
-            if (justificacion === 'intolerancia') {
-                const est1 = document.getElementById('estatina_prob_1')?.value;
-                const est2 = document.getElementById('estatina_prob_2')?.value;
-                const est3 = document.getElementById('estatina_prob_3')?.value;
-
-                if (!est1 || !est2 || !est3) {
-                    resultados.elegible = false;
-                    resultados.motivos_no_elegible.push('Intolerancia declarada pero no se han especificado las 3 estatinas probadas (requisito del protocolo).');
-                    resultados.trazabilidad.push('Protocolo página 3: Intolerancia requiere intento con 3 estatinas diferentes incluyendo pitavastatina, rosuvastatina o pravastatina');
-                }
-
-                const sintMialgias = document.getElementById('sint_mialgias')?.checked;
-                const sintCPK = document.getElementById('sint_cpk')?.checked;
-                const sintGI = document.getElementById('sint_gi')?.checked;
-                const sintHepatico = document.getElementById('sint_hepatico')?.checked;
-
-                if (!sintMialgias && !sintCPK && !sintGI && !sintHepatico) {
-                    resultados.advertencias.push('Intolerancia declarada pero no se ha especificado ningún síntoma limitante según definición del protocolo.');
-                }
-            }
-
-            // 4. DETERMINAR FÁRMACO Y DOSIS SI ES ELEGIBLE
-            if (resultados.elegible) {
-                const eventoUltimoAño = document.getElementById('evento_ultimo_año').value;
-                const ldlMayor150 = ldlActual > 150;
-                const ezetimibe = document.getElementById('ezetimibe').value;
-                const bempedoico = document.getElementById('bempedoico').value;
-                const optimizacionCompleta = (ezetimibe === 'si' || ezetimibe === 'intolerancia' || ezetimibe === 'contraindicacion') &&
-                                             (bempedoico === 'si' || bempedoico === 'intolerancia' || bempedoico === 'contraindicacion');
-
-                // REGLA 1: HF Homocigota
-                if (tipoPrevencion === 'hf_homo') {
-                    resultados.recomendacion_farmaco = 'Evolocumab';
-                    resultados.dosis_inicial = '420 mg';
-                    resultados.pauta = 'Cada 4 semanas (subcutánea)';
-                    resultados.justificacion = 'Hipercolesterolemia familiar homocigota según criterios de prescripción del protocolo (página 4).';
-                    resultados.trazabilidad.push('Protocolo página 4, punto 1: "Hipercolesterolemia familiar homocigota: Evolocumab 420 mg cada 4 semanas"');
-                }
-                // REGLA 2: Excepción - ECV + LDL >150 + evento último año
-                else if (tipoPrevencion === 'ecv' && ldlMayor150 && eventoUltimoAño === 'si' && optimizacionCompleta) {
-                    resultados.recomendacion_farmaco = 'Alirocumab o Evolocumab (dosis altas iniciales)';
-                    resultados.dosis_inicial = 'Alirocumab 150 mg cada 14 días O Evolocumab 140 mg cada 14 días';
-                    resultados.pauta = 'Inicio directo con dosis altas. Evaluar estrategia de ajuste si presenta alta respuesta (LDL < 35 mg/dl en 2 determinaciones).';
-                    resultados.justificacion = 'Paciente cumple criterios de EXCEPCIÓN del protocolo (página 5): ECV establecida + LDL > 150 mg/dl + evento cardiovascular en el último año + optimización completa de tratamiento oral.';
-                    resultados.trazabilidad.push('Protocolo página 5, punto 3: Excepciones para inicio directo con dosis altas');
-                    resultados.advertencias.push('⚠️ IMPORTANTE: Tras inicio con dosis altas, aplicar estrategia de ajuste de dosis si presenta alta respuesta según esquema de la página 5.');
-                }
-                // REGLA 3: ECV establecida o HF heterocigota - Inicio estándar
-                else if (tipoPrevencion === 'ecv' || tipoPrevencion === 'hf_hetero' || tipoPrevencion === 'primaria') {
-                    // Verificar si hay posibilidad de optimización oral
-                    const sinOptimizacionOral = (ezetimibe === 'intolerancia' || ezetimibe === 'contraindicacion') &&
-                                                (bempedoico === 'intolerancia' || bempedoico === 'contraindicacion');
-
-                    const ldlObjetivoVal = parseFloat(document.getElementById('ldl_objetivo').value) || 55;
-                    const reduccionNecesaria = ((ldlActual - ldlObjetivoVal) / ldlActual) * 100;
-
-                    if (sinOptimizacionOral && reduccionNecesaria > 55) {
-                        // Sin posibilidad de optimización oral + reducción alta → Alirocumab con escalada
-                        resultados.recomendacion_farmaco = 'Alirocumab';
-                        resultados.dosis_inicial = '75 mg';
-                        resultados.pauta = 'Cada 14 días (subcutánea). Repetir analítica a las 8 semanas para valorar escalada a 150 mg/14 días si no se alcanza objetivo.';
-                        resultados.justificacion = `Paciente sin posibilidad de optimización del tratamiento oral. Reducción de LDL necesaria estimada: ${reduccionNecesaria.toFixed(1)}% (desde ${ldlActual} a objetivo ${ldlObjetivoVal} mg/dl). Según protocolo, se inicia Alirocumab 75 mg con plan de escalada precoz.`;
-                        resultados.trazabilidad.push('Protocolo página 5: "En pacientes sin posibilidad de optimización del tratamiento oral... iniciar alirocumab 75 mg y repetir analítica a las 8 semanas"');
-                    } else {
-                        // Inicio estándar: Inclisirán o Alirocumab 75 mg
-                        resultados.recomendacion_farmaco = 'Inclisirán (preferido) o Alirocumab';
-                        resultados.dosis_inicial = 'Inclisirán 284 mg O Alirocumab 75 mg';
-                        resultados.pauta = 'Inclisirán: meses 0-3-6 y luego cada 6 meses (administración por personal sanitario). Alirocumab: cada 14 días (subcutánea autoadministrable o por personal).';
-                        resultados.justificacion = 'Inicio estándar según protocolo para enfermedad cardiovascular establecida o hipercolesterolemia familiar heterocigota (página 5).';
-                        resultados.trazabilidad.push('Protocolo página 5, punto 2: Inicio con inclisirán o alirocumab 75 mg/14 días');
-                        resultados.alertas.push('📌 Inclisirán requiere administración por personal sanitario en centro sanitario.');
-                    }
-                } else {
-                    resultados.recomendacion_farmaco = 'No determinado';
-                    resultados.justificacion = 'Indicación no especificada o no reconocida en el protocolo.';
-                }
-
-                // 5. PLAN DE SEGUIMIENTO
-                const fechaSolicitud = document.getElementById('fecha_solicitud').value;
-                if (fechaSolicitud) {
-                    const inicio = new Date(fechaSolicitud);
-                    const mes6 = new Date(inicio);
-                    mes6.setMonth(mes6.getMonth() + 6);
-                    const mes12 = new Date(inicio);
-                    mes12.setMonth(mes12.getMonth() + 12);
-                    const mes24 = new Date(inicio);
-                    mes24.setMonth(mes24.getMonth() + 24);
-
-                    resultados.seguimiento.push(`Mes 6 (aprox. ${mes6.toLocaleDateString('es-ES')}): Analítica con colesterol total y C-LDL. Evaluar respuesta terapéutica y ajustar dosis si es necesario.`);
-                    resultados.seguimiento.push(`Mes 12 (aprox. ${mes12.toLocaleDateString('es-ES')}): Analítica con colesterol total y C-LDL. Confirmar eficacia (descenso ≥15% LDL vs basal).`);
-                    resultados.seguimiento.push(`Posteriormente: Analítica cada 12 meses (siguiente aprox. ${mes24.toLocaleDateString('es-ES')}).`);
-                }
-
-                resultados.alertas.push('⚠️ OBLIGATORIO: Sin seguimiento analítico documentado, no se renovará la dispensación desde Farmacia (protocolo página 4).');
-
-                if (resultados.recomendacion_farmaco.includes('Inclisirán')) {
-                    resultados.alertas.push('⚠️ Inclisirán debe ser administrado por personal sanitario en centro sanitario (protocolo página 4).');
-                }
-
-                // 6. CRITERIOS DE AJUSTE
-                resultados.alertas.push('📊 AJUSTE POR ALTA RESPUESTA: Si LDL < 35 mg/dl en 2 determinaciones consecutivas, reducir dosis según esquema página 5 del protocolo.');
-                resultados.alertas.push('📊 AJUSTE POR FALTA DE RESPUESTA: Si no se alcanza objetivo, comunicar a Farmacia para aumentar dosis (Alirocumab 75 → 150 mg/14d o Evolocumab 140 mg/14d).');
-
-                // 7. CRITERIOS DE SUSPENSIÓN
-                resultados.alertas.push('⛔ SUSPENSIÓN: Insuficiencia hepática grave, embarazo, no cumplimiento de seguimiento, incumplimiento del paciente, o descenso < 15% LDL a 12 meses (tras cambio a otro anti-PCSK9).');
-                resultados.alertas.push('⚠️ ANTES DE SUSPENDER POR INEFICACIA: Comprobar técnica de inyección, descartar causas secundarias (hipotiroidismo, proteinuria, colestasis, hiperglucemia), considerar cambio a otro anti-PCSK9 (posible inmunogenicidad ~15%).');
-            }
-
-            mostrarResultados(resultados);
-            nextTab('resultados');
-        }
-
-        // ==================== MOSTRAR RESULTADOS ====================
-        function mostrarResultados(res) {
-            let html = '';
-
-            if (!res.elegible) {
-                html += `<div class="alert alert-danger">
-                    <h3 style="margin-bottom: 15px;">❌ PACIENTE NO ELEGIBLE PARA TRATAMIENTO CON ANTI-PCSK9</h3>
-                    <p><strong>Motivos de exclusión:</strong></p>
-                    <ul style="margin-left: 20px; margin-top: 10px;">
-                        ${res.motivos_no_elegible.map(m => `<li>${m}</li>`).join('')}
-                    </ul>
-                    <p style="margin-top: 15px;"><strong>Acción requerida:</strong> Optimizar el tratamiento hipolipemiante convencional y/o verificar adherencia antes de solicitar anti-PCSK9.</p>
-                </div>`;
-
-                if (res.trazabilidad.length > 0) {
-                    html += `<div class="trazabilidad">
-                        <h4>📋 Trazabilidad de la decisión (reglas aplicadas):</h4>
-                        <ul>${res.trazabilidad.map(t => `<li>${t}</li>`).join('')}</ul>
-                    </div>`;
-                }
-            } else {
-                html += `<div class="alert alert-success">
-                    <h3 style="margin-bottom: 10px;">✅ PACIENTE ELEGIBLE PARA TRATAMIENTO CON ANTI-PCSK9</h3>
-                    <p>El paciente cumple los criterios de inclusión del protocolo hospitalario.</p>
-                </div>`;
-
-                html += `<div class="result-card">
-                    <h3>💊 Recomendación Farmacoterapéutica</h3>
-                    <div class="result-item">
-                        <strong>Fármaco recomendado:</strong> ${res.recomendacion_farmaco}
-                    </div>
-                    <div class="result-item">
-                        <strong>Dosis inicial:</strong> ${res.dosis_inicial}
-                    </div>
-                    <div class="result-item">
-                        <strong>Pauta:</strong> ${res.pauta}
-                    </div>
-                    <div class="result-item">
-                        <strong>Justificación:</strong> ${res.justificacion}
-                    </div>
-                </div>`;
-
-                html += `<div class="result-card">
-                    <h3>📅 Plan de Seguimiento Obligatorio</h3>
-                    ${res.seguimiento.map(s => `<div class="result-item">${s}</div>`).join('')}
-                    <div class="note" style="margin-top: 15px;">
-                        <strong>Importante:</strong> El seguimiento analítico es obligatorio para la renovación de la dispensación. 
-                        El clínico responsable debe registrar los resultados en la historia clínica y comunicarlos a Farmacia.
-                    </div>
-                </div>`;
-
-                if (res.alertas.length > 0) {
-                    html += `<div class="result-card">
-                        <h3>⚠️ Alertas y Consideraciones Farmacéuticas</h3>
-                        ${res.alertas.map(a => `<div class="result-item">${a}</div>`).join('')}
-                    </div>`;
-                }
-
-                if (res.advertencias.length > 0) {
-                    html += `<div class="alert alert-warning">
-                        <strong>⚠️ Advertencias:</strong>
-                        <ul style="margin-left: 20px; margin-top: 10px;">
-                            ${res.advertencias.map(a => `<li>${a}</li>`).join('')}
-                        </ul>
-                    </div>`;
-                }
-
-                if (res.trazabilidad.length > 0) {
-                    html += `<div class="trazabilidad">
-                        <h4>📋 Trazabilidad de la decisión (reglas del protocolo aplicadas):</h4>
-                        <ul>${res.trazabilidad.map(t => `<li>${t}</li>`).join('')}</ul>
-                    </div>`;
-                }
-
-                html += `<div class="note">
-                    <strong>Próximos pasos:</strong><br>
-                    1. Revisar toda la información clínica introducida<br>
-                    2. Generar el informe imprimible mediante el botón inferior<br>
-                    3. Remitir la solicitud completa al secretario de la CAL de Hiperlipidemias<br>
-                    4. La CAL evaluará la solicitud en la próxima reunión ordinaria y comunicará el dictamen
-                </div>`;
-            }
-
-            document.getElementById('results_content').innerHTML = html;
-        }
-
-        // ==================== DESCARGAR INFORME ====================
-        function descargarInforme() {
-            // Recopilar todos los datos
-            const datos = {
-                medico_nombre: document.getElementById('medico_nombre').value,
-                medico_especialidad: document.getElementById('medico_especialidad').value,
-                medico_telefono: document.getElementById('medico_telefono').value,
-                fecha_solicitud: document.getElementById('fecha_solicitud').value,
-                paciente_nombre: document.getElementById('paciente_nombre').value,
-                paciente_nuhsa: document.getElementById('paciente_nuhsa').value,
-                paciente_fecha_nac: document.getElementById('paciente_fecha_nac').value,
-                paciente_edad: document.getElementById('paciente_edad').value,
-                indicacion: document.querySelector('input[name="tipo_prevencion"]:checked')?.nextElementSibling?.textContent || 'No especificada',
-                estatina_max_dosis: document.getElementById('estatina_max_dosis').value,
-                estatina_tipo: document.getElementById('estatina_tipo').value,
-                ezetimibe: document.getElementById('ezetimibe').value,
-                ezetimibe_dosis: document.getElementById('ezetimibe_dosis').value,
-                bempedoico: document.getElementById('bempedoico').value,
-                bempedoico_dosis: document.getElementById('bempedoico_dosis').value,
-                adherencia: document.getElementById('adherencia').value,
-                ldl_actual: document.getElementById('ldl_actual').value,
-                ldl_objetivo: document.getElementById('ldl_objetivo').options[document.getElementById('ldl_objetivo').selectedIndex]?.text,
-                comorb_cardio: document.getElementById('comorb_cardio').value,
-                comorb_cardio_año: document.getElementById('comorb_cardio_año').value,
-                comorb_cerebro: document.getElementById('comorb_cerebro').value,
-                comorb_cerebro_año: document.getElementById('comorb_cerebro_año').value,
-                comorb_arterio: document.getElementById('comorb_arterio').value,
-                comorb_arterio_año: document.getElementById('comorb_arterio_año').value,
-                comorb_atero: document.getElementById('comorb_atero').value,
-                comorb_atero_año: document.getElementById('comorb_atero_año').value,
-                resultados: document.getElementById('results_content').innerHTML
-            };
-            
-            const hoy = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            
-            // Generar HTML completo y limpio
-            const html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Solicitud Anti-PCSK9 - ${datos.paciente_nombre}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; color: #000; }
-        h1 { text-align: center; color: #2c3e50; font-size: 22px; margin-bottom: 10px; border-bottom: 3px solid #2c3e50; padding-bottom: 10px; }
-        h2 { color: #34495e; font-size: 18px; margin-top: 30px; border-bottom: 2px solid #34495e; padding-bottom: 5px; }
-        h3 { color: #2c3e50; font-size: 16px; margin-top: 20px; }
-        .subtitle { text-align: center; color: #666; font-size: 12px; margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        td { padding: 10px; border: 1px solid #ddd; }
-        td:first-child { font-weight: bold; background: #f8f9fa; width: 35%; }
-        .alert { padding: 15px; margin: 20px 0; border-left: 4px solid; page-break-inside: avoid; }
-        .alert-success { background: #d4edda; border-color: #28a745; color: #155724; }
-        .alert-danger { background: #f8d7da; border-color: #dc3545; color: #721c24; }
-        .alert-warning { background: #fff3cd; border-color: #ffc107; color: #856404; }
-        .alert-info { background: #d1ecf1; border-color: #17a2b8; color: #0c5460; }
-        .result-card { background: #f8f9fa; padding: 20px; margin: 20px 0; border: 1px solid #ddd; page-break-inside: avoid; }
-        .result-item { padding: 12px; background: white; margin: 10px 0; border-left: 3px solid #667eea; }
-        .trazabilidad { background: #fff8dc; border: 1px dashed #ffa500; padding: 15px; margin: 15px 0; }
-        .note { background: #e7f3ff; border-left: 4px solid #2196f3; padding: 12px; margin: 15px 0; }
-        .footer { margin-top: 50px; padding-top: 20px; border-top: 2px solid #ccc; font-size: 11px; color: #666; }
-        @media print {
-            body { margin: 20px; }
-            h1, h2, .result-card { page-break-after: avoid; }
-            .alert, .result-card, table { page-break-inside: avoid; }
-        }
-    </style>
-</head>
-<body>
-    <h1>FORMULARIO DE SOLICITUD DE FÁRMACOS CONTRA PCSK9</h1>
-    <div class="subtitle">AGS Sur de Sevilla - Protocolo Actualización Junio 2024</div>
-
-    <h2>I. MÉDICO SOLICITANTE</h2>
-    <table>
-        <tr><td>Nombre</td><td>${datos.medico_nombre}</td></tr>
-        <tr><td>Especialidad</td><td>${datos.medico_especialidad}</td></tr>
-        <tr><td>Teléfono</td><td>${datos.medico_telefono}</td></tr>
-        <tr><td>Fecha de solicitud</td><td>${datos.fecha_solicitud}</td></tr>
-    </table>
-
-    <h2>II. DATOS DE FILIACIÓN DEL PACIENTE</h2>
-    <table>
-        <tr><td>Nombre y apellidos</td><td>${datos.paciente_nombre}</td></tr>
-        <tr><td>NUHSA / Nº Historia</td><td>${datos.paciente_nuhsa}</td></tr>
-        <tr><td>Fecha de nacimiento</td><td>${datos.paciente_fecha_nac}</td></tr>
-        <tr><td>Edad</td><td>${datos.paciente_edad} años</td></tr>
-    </table>
-
-    <h2>III. INDICACIÓN PARA LA QUE SE SOLICITA EL FÁRMACO</h2>
-    <p style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #667eea;">
-        ${datos.indicacion}
-    </p>
-
-    <h2>IV. DATOS DE TRATAMIENTO HIPOLIPEMIANTE ACTUAL</h2>
-    <table>
-        <tr><td>Estatina en dosis máxima tolerada</td><td>${datos.estatina_max_dosis}</td></tr>
-        ${datos.estatina_tipo ? `<tr><td>Estatina actual</td><td>${datos.estatina_tipo}</td></tr>` : ''}
-        <tr><td>Ezetimibe</td><td>${datos.ezetimibe}${datos.ezetimibe_dosis ? ' (' + datos.ezetimibe_dosis + ')' : ''}</td></tr>
-        <tr><td>Ácido bempedoico</td><td>${datos.bempedoico}${datos.bempedoico_dosis ? ' (' + datos.bempedoico_dosis + ')' : ''}</td></tr>
-        <tr><td>Adherencia confirmada</td><td>${datos.adherencia}</td></tr>
-    </table>
-
-    <h2>V. DATOS CLÍNICOS/ANALÍTICOS</h2>
-    <table>
-        <tr><td>LDL-c actual (tras 1 mes de optimización)</td><td>${datos.ldl_actual} mg/dl</td></tr>
-        <tr><td>LDL-c objetivo</td><td>${datos.ldl_objetivo || 'No especificado'}</td></tr>
-    </table>
-
-    <h3>Comorbilidades cardiovasculares</h3>
-    <table>
-        <tr><td>Cardiopatía isquémica</td><td>${datos.comorb_cardio}${datos.comorb_cardio_año ? ' (Año: ' + datos.comorb_cardio_año + ')' : ''}</td></tr>
-        <tr><td>Enfermedad cerebrovascular</td><td>${datos.comorb_cerebro}${datos.comorb_cerebro_año ? ' (Año: ' + datos.comorb_cerebro_año + ')' : ''}</td></tr>
-        <tr><td>Arteriopatía periférica</td><td>${datos.comorb_arterio}${datos.comorb_arterio_año ? ' (Año: ' + datos.comorb_arterio_año + ')' : ''}</td></tr>
-        <tr><td>Ateromatosis aórtica/carotídea</td><td>${datos.comorb_atero}${datos.comorb_atero_año ? ' (Año: ' + datos.comorb_atero_año + ')' : ''}</td></tr>
-    </table>
-
-    <h2 style="margin-top: 40px;">VI. VALORACIÓN Y RECOMENDACIÓN FARMACOTERAPÉUTICA</h2>
-    ${datos.resultados}
-
-    <div class="footer">
-        <p><strong>Fecha de generación del informe:</strong> ${hoy}</p>
-        <p style="margin-top: 15px;">
-            Este informe ha sido generado por la herramienta de prescripción de anti-PCSK9 basada en el 
-            Protocolo de Manejo de Fármacos para Hipercolesterolemia en el Ámbito Hospitalario (AGS Sur de Sevilla, Actualización Junio 2024).
-            Debe ser revisado y validado por el clínico responsable y la Comisión Asesora Local de Hiperlipidemias.
-        </p>
-        <p style="margin-top: 15px; text-align: center; font-style: italic;">
-            Herramienta creada por Ramón Morillo - Febrero 2026
-        </p>
-    </div>
-</body>
-</html>`;
-
-            // Descargar
-            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            const paciente = datos.paciente_nombre.replace(/\s+/g, '_') || 'paciente';
-            const fecha = new Date().toISOString().split('T')[0];
-            a.download = `Solicitud_AntiPCSK9_${paciente}_${fecha}.html`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            setTimeout(() => {
-                alert('✅ Informe descargado correctamente.\n\nPasos:\n1. Abra el archivo descargado en su navegador\n2. Pulse Ctrl+P (Cmd+P en Mac)\n3. Seleccione "Guardar como PDF"\n\nEl formato es profesional y listo para compartir con el comité.');
-            }, 300);
-        }
-
-        // ==================== RESET ====================
-        function resetForm() {
-            alert('Función ejecutada. Reiniciando formulario...');
-            
-            if (!confirm('¿Está seguro de que desea reiniciar el formulario? Se perderán todos los datos introducidos.')) {
-                return;
-            }
-            
-            try {
-                // Limpiar todos los inputs
-                document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], input[type="tel"], textarea').forEach(el => {
-                    el.value = '';
-                });
-                
-                // Limpiar selects
-                document.querySelectorAll('select').forEach(el => {
-                    el.selectedIndex = 0;
-                });
-                
-                // Desmarcar checkboxes y radios
-                document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => {
-                    el.checked = false;
-                });
-                
-                // Resetear pestañas
-                document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.classList.remove('active', 'completed');
-                });
-                
-                // Activar primera pestaña
-                const solicitante = document.getElementById('solicitante');
-                if (solicitante) solicitante.classList.add('active');
-                
-                const tabSolicitante = document.querySelector('[data-tab="solicitante"]');
-                if (tabSolicitante) tabSolicitante.classList.add('active');
-                
-                // Limpiar resultados
-                const resultsContent = document.getElementById('results_content');
-                if (resultsContent) {
-                    resultsContent.innerHTML = `
-                        <div class="alert alert-info">
-                            Complete todas las secciones anteriores y pulse "Calcular Elegibilidad y Recomendación" para ver los resultados.
-                        </div>
-                    `;
-                }
-                
-                // Ocultar detalles condicionales
-                const estatina = document.getElementById('estatina_detalle');
-                if (estatina) estatina.style.display = 'none';
-                
-                const intolerancia = document.getElementById('intolerancia_detalle');
-                if (intolerancia) intolerancia.style.display = 'none';
-                
-                // Establecer fecha actual
-                const fechaSol = document.getElementById('fecha_solicitud');
-                if (fechaSol) fechaSol.value = new Date().toISOString().split('T')[0];
-                
-                // Scroll arriba
-                window.scrollTo(0, 0);
-                
-                alert('✅ Formulario reiniciado correctamente.');
-            } catch (e) {
-                alert('Error al reiniciar: ' + e.message);
-                console.error(e);
-            }
-        }
-
-        // ==================== CASOS DE EJEMPLO ====================
-        function loadExample(num) {
-            // Limpiar formulario sin confirmación
-            document.querySelectorAll('input, select, textarea').forEach(el => {
-                if (el.type === 'checkbox' || el.type === 'radio') {
-                    el.checked = false;
-                } else {
-                    el.value = '';
-                }
-            });
-            
-            const hoy = new Date().toISOString().split('T')[0];
-
-            if (num === 1) {
-                // EJEMPLO 1: HF Homocigota
-                document.getElementById('medico_nombre').value = 'Dra. María García López';
-                document.getElementById('medico_especialidad').value = 'Medicina Interna';
-                document.getElementById('medico_telefono').value = '955015100';
-                document.getElementById('fecha_solicitud').value = hoy;
-
-                document.getElementById('paciente_nombre').value = 'Juan Pérez Martínez';
-                document.getElementById('paciente_nuhsa').value = 'ES1234567890';
-                document.getElementById('paciente_fecha_nac').value = '1985-03-15';
-                calcularEdad();
-
-                document.getElementById('ind_hf_homo').checked = true;
-                document.getElementById('hf_genetico_positivo').checked = true;
-
-                document.getElementById('estatina_max_dosis').value = 'si';
-                updateEstatina();
-                document.getElementById('estatina_tipo').value = 'atorvastatina_80';
-                document.getElementById('ezetimibe').value = 'si';
-                document.getElementById('ezetimibe_dosis').value = '10 mg/día';
-                document.getElementById('bempedoico').value = 'si';
-                document.getElementById('bempedoico_dosis').value = '180 mg/día';
-                document.getElementById('adherencia').value = 'si';
-                document.getElementById('adherencia_receta').checked = true;
-                document.getElementById('adherencia_ldl').checked = true;
-
-                document.getElementById('just_ninguna').checked = true;
-
-                document.getElementById('ldl_actual').value = '280';
-                document.getElementById('ldl_objetivo').value = '100';
-                calcularObjetivo();
-
-                alert('✅ Ejemplo 1 cargado: Hipercolesterolemia Familiar Homocigota\n\nResultado esperado: Elegible → Evolocumab 420 mg cada 4 semanas');
-
-            } else if (num === 2) {
-                // EJEMPLO 2: ECV + LDL >150 + evento último año (excepción para dosis altas)
-                document.getElementById('medico_nombre').value = 'Dr. Carlos Fernández Ruiz';
-                document.getElementById('medico_especialidad').value = 'Cardiología';
-                document.getElementById('medico_telefono').value = '955015200';
-                document.getElementById('fecha_solicitud').value = hoy;
-
-                document.getElementById('paciente_nombre').value = 'Ana Torres Sánchez';
-                document.getElementById('paciente_nuhsa').value = 'ES9876543210';
-                document.getElementById('paciente_fecha_nac').value = '1960-08-22';
-                calcularEdad();
-
-                document.getElementById('ind_ecv').checked = true;
-
-                document.getElementById('estatina_max_dosis').value = 'si';
-                updateEstatina();
-                document.getElementById('estatina_tipo').value = 'rosuvastatina_40';
-                document.getElementById('ezetimibe').value = 'si';
-                document.getElementById('ezetimibe_dosis').value = '10 mg/día';
-                document.getElementById('bempedoico').value = 'si';
-                document.getElementById('bempedoico_dosis').value = '180 mg/día';
-                document.getElementById('adherencia').value = 'si';
-                document.getElementById('adherencia_receta').checked = true;
-                document.getElementById('adherencia_entrevista').checked = true;
-
-                document.getElementById('just_ineficacia').checked = true;
-
-                document.getElementById('ldl_actual').value = '165';
-                document.getElementById('ldl_objetivo').value = '55';
-                calcularObjetivo();
-
-                document.getElementById('comorb_cardio').value = 'si';
-                document.getElementById('comorb_cardio_año').value = '2024';
-                document.getElementById('evento_ultimo_año').value = 'si';
-
-                alert('✅ Ejemplo 2 cargado: ECV Establecida + Evento Reciente + LDL Alto\n\nResultado esperado: Elegible → Inicio directo con dosis altas (Alirocumab 150 mg o Evolocumab 140 mg cada 14 días)');
-
-            } else if (num === 3) {
-                // EJEMPLO 3: NO ELEGIBLE (falta optimización y adherencia no confirmada)
-                document.getElementById('medico_nombre').value = 'Dr. Luis Moreno Castro';
-                document.getElementById('medico_especialidad').value = 'Endocrinología';
-                document.getElementById('medico_telefono').value = '955015300';
-                document.getElementById('fecha_solicitud').value = hoy;
-
-                document.getElementById('paciente_nombre').value = 'Pedro Gómez Navarro';
-                document.getElementById('paciente_nuhsa').value = 'ES1122334455';
-                document.getElementById('paciente_fecha_nac').value = '1975-11-10';
-                calcularEdad();
-
-                document.getElementById('ind_prev_primaria').checked = true;
-                document.getElementById('hf_dutch').checked = true;
-
-                document.getElementById('estatina_max_dosis').value = 'no';  // FALTA OPTIMIZACIÓN
-                document.getElementById('ezetimibe').value = 'no';  // NO TOMA EZETIMIBE
-                document.getElementById('bempedoico').value = 'no';
-                document.getElementById('adherencia').value = 'no';  // ADHERENCIA NO CONFIRMADA
-
-                document.getElementById('just_ninguna').checked = true;
-
-                document.getElementById('ldl_actual').value = '140';
-                document.getElementById('ldl_objetivo').value = '100';
-                calcularObjetivo();
-
-                alert('⚠️ Ejemplo 3 cargado: Paciente NO ELEGIBLE\n\nResultado esperado: NO ELEGIBLE por falta de optimización (no en dosis máxima de estatina, no ezetimibe) y adherencia no confirmada');
-            }
-        }
-
-        // ==================== INICIALIZACIÓN ====================
-        window.onload = function() {
-            document.getElementById('fecha_solicitud').value = new Date().toISOString().split('T')[0];
-        };
-    </script>
+    <aside class="sidebar">
+      <div class="panel"><h3>Resumen del caso</h3><div id="case_summary"></div></div>
+      <div class="panel"><h3>Borrador local</h3><div id="save_status" class="save-status">Sin guardar.</div><div class="btn-group"><button class="btn btn-secondary" onclick="saveDraftManual()">Guardar borrador</button><button class="btn btn-info" onclick="continueLastDraft()">Continuar último borrador</button></div></div>
+      <div class="panel"><h3>Progreso</h3><div class="save-status" id="progress_status">Paso 1/8</div></div>
+    </aside>
+  </div>
+</div>
+<div id="pdf-render-area"></div>
+<script>
+const STORAGE_KEYS = { draft: 'antipcsk9_lastDraft', requests: 'antipcsk9_requests', lastSavedAt: 'antipcsk9_lastSavedAt' };
+let currentResults = null;
+let currentRequestId = null;
+
+function nextTab(tab){ if(!validateCurrentTab()) return; activateTab(tab,true); }
+function prevTab(tab){ activateTab(tab,false); }
+function activateTab(tab, markComplete=false){ document.querySelector('.section.active')?.classList.remove('active'); const activeTabBtn=document.querySelector('.tab.active'); if(markComplete&&activeTabBtn) activeTabBtn.classList.add('completed'); activeTabBtn?.classList.remove('active'); document.getElementById(tab).classList.add('active'); document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active'); updateProgress(); if(tab==='dashboard') renderDashboard(); window.scrollTo(0,0); }
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>activateTab(t.dataset.tab,false)));
+function validateCurrentTab(){ const req=document.querySelector('.section.active').querySelectorAll('[required]'); for(const i of req){ if(!i.value){ alert('Complete: '+(i.previousElementSibling?.textContent||'Campo requerido')); i.focus(); return false; }} return true; }
+
+function calcularEdad(){ const f=document.getElementById('paciente_fecha_nac').value; if(!f) return; const n=new Date(f),h=new Date(); let e=h.getFullYear()-n.getFullYear(); const m=h.getMonth()-n.getMonth(); if(m<0||(m===0&&h.getDate()<n.getDate())) e--; document.getElementById('paciente_edad').value=e; }
+function updateEstatina(){ document.getElementById('estatina_detalle').style.display=document.getElementById('estatina_max_dosis').value==='si'?'block':'none'; }
+function updateJustificacion(){ document.getElementById('intolerancia_detalle').style.display=document.querySelector('input[name="justificacion"]:checked')?.value==='intolerancia'?'block':'none'; }
+function calcularObjetivo(){ const l=parseFloat(document.getElementById('ldl_actual').value); if(!isNaN(l)) document.getElementById('ldl_mayor_150').value=l>150?'si':'no'; runClinicalWarnings(); updateCaseSummary(); }
+
+function getFormData(){ return {
+  medico_nombre:v('medico_nombre'), medico_especialidad:v('medico_especialidad'), medico_telefono:v('medico_telefono'), fecha_solicitud:v('fecha_solicitud'),
+  paciente_nombre:v('paciente_nombre'), paciente_nuhsa:v('paciente_nuhsa'), paciente_fecha_nac:v('paciente_fecha_nac'), paciente_edad:v('paciente_edad'),
+  tipo_prevencion:document.querySelector('input[name="tipo_prevencion"]:checked')?.value||'',
+  hf_dutch:c('hf_dutch'), hf_genetico_positivo:c('hf_genetico_positivo'), hf_genetico_indeterminado:c('hf_genetico_indeterminado'),
+  estatina_max_dosis:v('estatina_max_dosis'), estatina_tipo:v('estatina_tipo'), ezetimibe:v('ezetimibe'), ezetimibe_dosis:v('ezetimibe_dosis'), bempedoico:v('bempedoico'), bempedoico_dosis:v('bempedoico_dosis'),
+  adherencia:v('adherencia'), adherencia_receta:c('adherencia_receta'), adherencia_ldl:c('adherencia_ldl'), adherencia_entrevista:c('adherencia_entrevista'),
+  justificacion:document.querySelector('input[name="justificacion"]:checked')?.value||'', estatina_prob_1:v('estatina_prob_1'), estatina_prob_2:v('estatina_prob_2'), estatina_prob_3:v('estatina_prob_3'), sint_mialgias:c('sint_mialgias'), sint_cpk:c('sint_cpk'), sint_gi:c('sint_gi'), sint_hepatico:c('sint_hepatico'),
+  ldl_actual:v('ldl_actual'), ldl_objetivo:v('ldl_objetivo'), comorb_cardio:v('comorb_cardio'), comorb_cardio_año:v('comorb_cardio_año'), comorb_cerebro:v('comorb_cerebro'), comorb_cerebro_año:v('comorb_cerebro_año'), comorb_arterio:v('comorb_arterio'), comorb_arterio_año:v('comorb_arterio_año'), comorb_atero:v('comorb_atero'), comorb_atero_año:v('comorb_atero_año'), comorb_otras:v('comorb_otras'), evento_ultimo_año:v('evento_ultimo_año'), ldl_mayor_150:v('ldl_mayor_150')
+}; }
+function v(id){ return document.getElementById(id)?.value || ''; }
+function c(id){ return !!document.getElementById(id)?.checked; }
+
+function runClinicalWarnings(){ const d=getFormData(); const warnings=[];
+  if(d.justificacion==='intolerancia' && (![d.estatina_prob_1,d.estatina_prob_2,d.estatina_prob_3].every(Boolean))) warnings.push('Intolerancia marcada: faltan las 3 estatinas documentadas.');
+  if(d.ezetimibe==='no' && !['intolerancia','contraindicacion'].includes(d.justificacion||'') ) warnings.push('Solicitud sin ezetimibe documentado ni causa de intolerancia/contraindicación.');
+  if(d.adherencia==='no') warnings.push('Adherencia no confirmada: la elegibilidad puede quedar limitada.');
+  const ldl=parseFloat(d.ldl_actual||0), obj=parseFloat((d.ldl_objetivo||'').replace('_hf',''));
+  if(ldl && obj && ldl<=obj) warnings.push(`LDL actual (${ldl}) no supera el objetivo seleccionado (${obj}). Revise criterio.`);
+  if(d.evento_ultimo_año==='si' && !(d.tipo_prevencion==='ecv' && ldl>150)) warnings.push('Excepción por evento último año marcada sin cumplir ECV + LDL >150.');
+  document.getElementById('clinical_warnings').innerHTML = warnings.length?`<div class="alert alert-warning"><strong>Advertencias clínicas:</strong><ul style="margin-left:18px;">${warnings.map(w=>`<li>${w}</li>`).join('')}</ul></div>`:'';
+  return warnings;
+}
+
+function calcularResultados(){ const d=getFormData(); const res={elegible:true,motivos_no_elegible:[],advertencias:runClinicalWarnings(),recomendacion_farmaco:'',dosis_inicial:'',pauta:'',justificacion:'',seguimiento:[],alertas:[],trazabilidad:[],decision:'Elegible',motivos_clave:[],siguiente_paso:''};
+  if (d.estatina_max_dosis==='no' && !['intolerancia','contraindicacion'].includes(d.justificacion)) { res.elegible=false; res.motivos_no_elegible.push('No consta estatina a dosis máxima tolerada sin justificación.'); }
+  if (d.adherencia!=='si') { res.elegible=false; res.motivos_no_elegible.push('Adherencia terapéutica no confirmada.'); }
+  const ldl=parseFloat(d.ldl_actual)||0;
+  if(!d.tipo_prevencion){ res.elegible=false; res.motivos_no_elegible.push('No se seleccionó indicación clínica.'); }
+  else if(ldl<=100){ res.elegible=false; res.motivos_no_elegible.push(`LDL actual (${ldl}) no cumple umbral >100 mg/dl.`); }
+  if(d.justificacion==='intolerancia'){
+    if(!d.estatina_prob_1||!d.estatina_prob_2||!d.estatina_prob_3){ res.elegible=false; res.motivos_no_elegible.push('Intolerancia sin 3 estatinas probadas documentadas.'); }
+    if(!d.sint_mialgias&&!d.sint_cpk&&!d.sint_gi&&!d.sint_hepatico) res.advertencias.push('Intolerancia declarada sin síntoma documentado.');
+  }
+  if(res.elegible){ const optimizacionCompleta=['si','intolerancia','contraindicacion'].includes(d.ezetimibe) && ['si','intolerancia','contraindicacion'].includes(d.bempedoico); const obj=parseFloat((d.ldl_objetivo||'55').replace('_hf',''))||55; const red=((ldl-obj)/ldl)*100;
+    if(d.tipo_prevencion==='hf_homo'){ res.recomendacion_farmaco='Evolocumab'; res.dosis_inicial='420 mg'; res.pauta='Cada 4 semanas'; res.justificacion='HF homocigota.'; }
+    else if(d.tipo_prevencion==='ecv' && ldl>150 && d.evento_ultimo_año==='si' && optimizacionCompleta){ res.recomendacion_farmaco='Alirocumab o Evolocumab (dosis altas iniciales)'; res.dosis_inicial='Alirocumab 150 mg/14d o Evolocumab 140 mg/14d'; res.pauta='Inicio directo dosis altas'; res.justificacion='Criterio de excepción por evento CV último año.'; }
+    else if(['ecv','hf_hetero','primaria'].includes(d.tipo_prevencion)){ const sinOpt=(['intolerancia','contraindicacion'].includes(d.ezetimibe)&&['intolerancia','contraindicacion'].includes(d.bempedoico)); if(sinOpt && red>55){ res.recomendacion_farmaco='Alirocumab'; res.dosis_inicial='75 mg'; res.pauta='Cada 14 días, reevaluar 8 semanas'; res.justificacion='Alta reducción requerida sin optimización oral.'; } else { res.recomendacion_farmaco='Inclisirán (preferido) o Alirocumab'; res.dosis_inicial='Inclisirán 284 mg o Alirocumab 75 mg'; res.pauta='Según ficha y protocolo'; res.justificacion='Inicio estándar protocolo.'; }}
+    res.alertas.push('Seguimiento analítico obligatorio para renovación.');
+    const ini = new Date(d.fecha_solicitud||new Date()); const m6=new Date(ini);m6.setMonth(m6.getMonth()+6); const m12=new Date(ini);m12.setMonth(m12.getMonth()+12);
+    res.seguimiento=[`Mes 6 (${m6.toLocaleDateString('es-ES')}): analítica LDL.`,`Mes 12 (${m12.toLocaleDateString('es-ES')}): confirmar eficacia.`];
+  }
+  if(!res.elegible){ res.decision='No elegible'; res.motivos_clave=[...res.motivos_no_elegible].slice(0,6); res.siguiente_paso='Optimizar tratamiento hipolipemiante y confirmar adherencia antes de reevaluar.'; }
+  else if(res.advertencias.length){ res.decision='Revisión manual recomendada'; res.motivos_clave=['Caso con advertencias clínicas relevantes',...res.advertencias].slice(0,6); res.siguiente_paso='Revisión manual por criterios de excepción/documentación incompleta.'; }
+  else { res.decision='Elegible'; res.motivos_clave=['Persistencia de LDL por encima de objetivo','Optimización terapéutica documentada','Cumple indicación clínica seleccionada'].slice(0,6); res.siguiente_paso='Remitir a Comisión Asesora Local de Hiperlipidemias.'; }
+  currentResults = res; showResults(res); saveRequest('completada'); activateTab('resultados',true);
+}
+
+function showResults(res){ let html=`<div class="alert ${res.decision==='Elegible'?'alert-success':res.decision==='No elegible'?'alert-danger':'alert-warning'}"><h3>Decisión final: ${res.decision}</h3><p>${res.siguiente_paso}</p></div>`;
+  html += `<div class="result-card"><h3>Resumen ejecutivo</h3>${buildExecutiveSummaryHtml(res)}</div>`;
+  html += `<div class="result-card"><h3>Motivos clave</h3><ul style="margin-left:18px;">${res.motivos_clave.map(m=>`<li>${m}</li>`).join('')}</ul></div>`;
+  if(res.elegible){ html += `<div class="result-card"><h3>Recomendación farmacoterapéutica</h3><div class="result-item"><strong>Fármaco:</strong> ${res.recomendacion_farmaco}</div><div class="result-item"><strong>Dosis:</strong> ${res.dosis_inicial}</div><div class="result-item"><strong>Pauta:</strong> ${res.pauta}</div><div class="result-item"><strong>Justificación:</strong> ${res.justificacion}</div></div><div class="result-card"><h3>Seguimiento</h3>${res.seguimiento.map(s=>`<div class="result-item">${s}</div>`).join('')}</div>`; }
+  if(res.advertencias.length) html += `<div class="alert alert-warning"><ul style="margin-left:18px;">${res.advertencias.map(a=>`<li>${a}</li>`).join('')}</ul></div>`;
+  document.getElementById('results_content').innerHTML=html;
+  updateCaseSummary();
+}
+
+function buildExecutiveSummary(){ const d=getFormData(); const lbl=document.querySelector(`label[for="${document.querySelector('input[name="tipo_prevencion"]:checked')?.id||''}"]`)?.textContent?.trim()||d.tipo_prevencion||'No especificada'; return { paciente:d.paciente_nombre||'No informado', solicitante:d.medico_nombre||'No informado', indicacion:lbl, ldlActual:d.ldl_actual||'No informado', ldlObjetivo:d.ldl_objetivo||'No informado', estatinaMax:(d.estatina_max_dosis==='si'?'Sí':'No'), ezetimibe:(d.ezetimibe==='si'?'Sí':'No'), bempedoico:(d.bempedoico==='si'?'Sí':'No'), adherencia:(d.adherencia==='si'?'Sí':'No'), resultado:currentResults?.decision||'Pendiente' }; }
+function buildExecutiveSummaryHtml(res){ const s=buildExecutiveSummary(); return `<div class="result-item"><strong>Paciente:</strong> ${s.paciente}</div><div class="result-item"><strong>Solicitante:</strong> ${s.solicitante}</div><div class="result-item"><strong>Indicación:</strong> ${s.indicacion}</div><div class="result-item"><strong>LDL actual / objetivo:</strong> ${s.ldlActual} / ${s.ldlObjetivo}</div><div class="result-item"><strong>Estatina máxima tolerada:</strong> ${s.estatinaMax} · <strong>Ezetimibe:</strong> ${s.ezetimibe} · <strong>Bempedoico:</strong> ${s.bempedoico} · <strong>Adherencia confirmada:</strong> ${s.adherencia}</div><div class="result-item"><strong>Resultado final de elegibilidad:</strong> ${res.decision}</div>`; }
+
+async function downloadPdf(){ if(!currentResults){ alert('Calcule resultados antes de exportar PDF.'); return; }
+  const report = document.createElement('div'); const now=new Date(); report.style.padding='28px'; report.innerHTML=`<h2 style="font-size:20px;margin-bottom:4px;">Herramienta de Prescripción de Fármacos Anti-PCSK9</h2><div style="font-size:12px;margin-bottom:14px;">Protocolo de Manejo de Hipercolesterolemia en el Ámbito Hospitalario<br>AGS Sur de Sevilla – Actualización Junio 2024<br>Creado por Ramón Morillo – Febrero 2026</div><div style="font-size:12px;margin-bottom:10px;"><strong>Fecha y hora de generación:</strong> ${now.toLocaleDateString('es-ES')} ${now.toLocaleTimeString('es-ES')}</div><h3>Resumen ejecutivo</h3>${buildExecutiveSummaryHtml(currentResults)}<h3 style="margin-top:12px;">Resultado clínico</h3>${document.getElementById('results_content').innerHTML}<div style="margin-top:16px;padding:10px;border-left:4px solid #8a6d3b;background:#fff8e6;font-size:11px;"><strong>Aviso legal:</strong> Informe generado automáticamente como ayuda clínica. No sustituye el juicio clínico profesional ni el proceso de validación de la Comisión Asesora Local de Hiperlipidemias.</div>`;
+  const render=document.getElementById('pdf-render-area'); render.innerHTML=''; render.appendChild(report);
+  const { jsPDF } = window.jspdf; const pdf = new jsPDF('p','pt','a4'); await pdf.html(report,{margin:[24,24,24,24],autoPaging:'text',html2canvas:{scale:0.75}});
+  const patient=(v('paciente_nombre')||'paciente').replace(/\s+/g,'_'); pdf.save(`Solicitud_AntiPCSK9_${patient}_${new Date().toISOString().slice(0,10)}.pdf`); render.innerHTML=''; }
+
+function buildClinicalSummary(){ const s=buildExecutiveSummary(); return `Resumen clínico anti-PCSK9:\nPaciente: ${s.paciente} (NUHSA: ${v('paciente_nuhsa')||'No informado'}).\nSolicitante: ${s.solicitante} - ${v('medico_especialidad')||'No informada'}.\nIndicación: ${s.indicacion}.\nLDL actual: ${s.ldlActual} mg/dl. Objetivo: ${s.ldlObjetivo}.\nEstatina máxima tolerada: ${s.estatinaMax}; Ezetimibe: ${s.ezetimibe}; Ácido bempedoico: ${s.bempedoico}; Adherencia: ${s.adherencia}.\nDecisión final: ${s.resultado}.\nSiguiente paso: ${currentResults?.siguiente_paso||'Pendiente de cálculo'}.`; }
+function buildCommissionText(){ return `Justificación para Comisión Asesora Local de Hiperlipidemias\nFecha de solicitud: ${v('fecha_solicitud')||'No informada'}.\nPaciente: ${v('paciente_nombre')||'No informado'} (NUHSA/HC: ${v('paciente_nuhsa')||'No informado'}).\nMédico solicitante: ${v('medico_nombre')||'No informado'} (${v('medico_especialidad')||'No informada'}).\nContexto clínico e indicación: ${buildExecutiveSummary().indicacion}.\nDatos lipídicos: LDL actual ${v('ldl_actual')||'No informado'} mg/dl; objetivo ${v('ldl_objetivo')||'No informado'}.\nOptimización documentada: estatina máxima tolerada=${v('estatina_max_dosis')||'No informado'}, ezetimibe=${v('ezetimibe')||'No informado'}, bempedoico=${v('bempedoico')||'No informado'}, adherencia=${v('adherencia')||'No informado'}.\nResultado del análisis: ${currentResults?.decision||'Pendiente'}${currentResults?.justificacion?` (${currentResults.justificacion})`:''}.\nMotivos clave: ${(currentResults?.motivos_clave||[]).join('; ')||'Pendiente'}.\nPropuesta: ${currentResults?.siguiente_paso||'Pendiente'}.`; }
+async function copyText(txt){ try{ await navigator.clipboard.writeText(txt); alert('Texto copiado al portapapeles.'); }catch{ alert('No se pudo copiar automáticamente.'); } }
+function copyClinicalSummary(){ copyText(buildClinicalSummary()); }
+function copyCommissionJustification(){ copyText(buildCommissionText()); }
+
+function updateCaseSummary(){ const s=buildExecutiveSummary(); document.getElementById('case_summary').innerHTML=`<div class="summary-item"><strong>Paciente:</strong> ${s.paciente}</div><div class="summary-item"><strong>Indicación:</strong> ${s.indicacion}</div><div class="summary-item"><strong>LDL:</strong> ${s.ldlActual} / ${s.ldlObjetivo}</div><div class="summary-item"><strong>Estatina máx.:</strong> ${s.estatinaMax}</div><div class="summary-item"><strong>Ezetimibe / Bempedoico:</strong> ${s.ezetimibe} / ${s.bempedoico}</div><div class="summary-item"><strong>Adherencia:</strong> ${s.adherencia}</div><div class="summary-item"><strong>Estado provisional:</strong> ${s.resultado}</div>`; }
+function updateProgress(){ const idx=[...document.querySelectorAll('.tab')].findIndex(t=>t.classList.contains('active'))+1; document.getElementById('progress_status').textContent=`Paso ${idx}/8`; }
+
+function persistDraft(){ const d={ id: currentRequestId||crypto.randomUUID(), updatedAt:new Date().toISOString(), estado:'borrador', isDemo:false, data:getFormData(), result:currentResults }; localStorage.setItem(STORAGE_KEYS.draft, JSON.stringify(d)); localStorage.setItem(STORAGE_KEYS.lastSavedAt, d.updatedAt); updateSaveStatus(true,d.updatedAt); return d; }
+function updateSaveStatus(saved, ts){ document.getElementById('save_status').textContent = saved?`Borrador guardado · Último guardado: ${new Date(ts).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`:'Sin guardar.'; }
+function saveDraftManual(){ persistDraft(); alert('Borrador guardado localmente.'); }
+function continueLastDraft(){ const raw=localStorage.getItem(STORAGE_KEYS.draft); if(!raw){ alert('No hay borrador disponible.'); return; } applySavedRequest(JSON.parse(raw)); alert('Último borrador cargado.'); }
+function saveRequest(status='completada'){ const draft=persistDraft(); const all=JSON.parse(localStorage.getItem(STORAGE_KEYS.requests)||'[]'); const req={ id:draft.id, createdAt:all.find(x=>x.id===draft.id)?.createdAt||new Date().toISOString(), updatedAt:new Date().toISOString(), estado:status, isDemo:false, data:getFormData(), result:currentResults }; const i=all.findIndex(x=>x.id===req.id); if(i>=0) all[i]=req; else all.unshift(req); localStorage.setItem(STORAGE_KEYS.requests, JSON.stringify(all)); currentRequestId=req.id; renderDashboard(); }
+function applySavedRequest(rec){ const d=rec.data||{}; Object.entries(d).forEach(([k,val])=>{ const el=document.getElementById(k); if(el){ if(el.type==='checkbox') el.checked=!!val; else el.value=val; }}); if(d.tipo_prevencion) document.querySelector(`input[name="tipo_prevencion"][value="${d.tipo_prevencion}"]`)?.setAttribute('checked','checked'),document.querySelector(`input[name="tipo_prevencion"][value="${d.tipo_prevencion}"]`).checked=true; if(d.justificacion) document.querySelector(`input[name="justificacion"][value="${d.justificacion}"]`)?.setAttribute('checked','checked'),document.querySelector(`input[name="justificacion"][value="${d.justificacion}"]`).checked=true; currentResults=rec.result||null; currentRequestId=rec.id||null; updateEstatina(); updateJustificacion(); updateCaseSummary(); runClinicalWarnings(); if(currentResults) showResults(currentResults); updateSaveStatus(true,rec.updatedAt||new Date().toISOString()); }
+function resetForm(){ if(!confirm('¿Desea iniciar una nueva solicitud y limpiar los datos actuales?')) return; document.querySelectorAll('input,select,textarea').forEach(el=>{ if(el.type==='checkbox'||el.type==='radio') el.checked=false; else if(el.id==='fecha_solicitud') el.value=new Date().toISOString().slice(0,10); else el.value=''; }); currentResults=null; currentRequestId=null; localStorage.removeItem(STORAGE_KEYS.draft); updateSaveStatus(false); document.getElementById('results_content').innerHTML='<div class="alert alert-info">Complete y calcule para ver resultado.</div>'; document.getElementById('clinical_warnings').innerHTML=''; activateTab('solicitante'); updateCaseSummary(); }
+
+function loadExample(num){ resetWithoutConfirm(); const hoy=new Date().toISOString().slice(0,10);
+  const demos={1:{medico_nombre:'Dra. María García López',medico_especialidad:'Medicina Interna',medico_telefono:'955015100',fecha_solicitud:hoy,paciente_nombre:'Juan Pérez Martínez',paciente_nuhsa:'ES1234567890',paciente_fecha_nac:'1985-03-15',tipo_prevencion:'hf_homo',hf_genetico_positivo:true,estatina_max_dosis:'si',estatina_tipo:'atorvastatina_80',ezetimibe:'si',ezetimibe_dosis:'10 mg/día',bempedoico:'si',bempedoico_dosis:'180 mg/día',adherencia:'si',adherencia_receta:true,adherencia_ldl:true,justificacion:'ninguna',ldl_actual:'280',ldl_objetivo:'100'},2:{medico_nombre:'Dr. Carlos Fernández Ruiz',medico_especialidad:'Cardiología',medico_telefono:'955015200',fecha_solicitud:hoy,paciente_nombre:'Ana Torres Sánchez',paciente_nuhsa:'ES9876543210',paciente_fecha_nac:'1960-08-22',tipo_prevencion:'ecv',estatina_max_dosis:'si',estatina_tipo:'rosuvastatina_40',ezetimibe:'si',ezetimibe_dosis:'10 mg/día',bempedoico:'si',bempedoico_dosis:'180 mg/día',adherencia:'si',adherencia_receta:true,adherencia_entrevista:true,justificacion:'ineficacia',ldl_actual:'165',ldl_objetivo:'55',comorb_cardio:'si',comorb_cardio_año:'2024',evento_ultimo_año:'si'},3:{medico_nombre:'Dr. Luis Moreno Castro',medico_especialidad:'Endocrinología',medico_telefono:'955015300',fecha_solicitud:hoy,paciente_nombre:'Pedro Gómez Navarro',paciente_nuhsa:'ES1122334455',paciente_fecha_nac:'1975-11-10',tipo_prevencion:'primaria',hf_dutch:true,estatina_max_dosis:'no',ezetimibe:'no',bempedoico:'no',adherencia:'no',justificacion:'ninguna',ldl_actual:'140',ldl_objetivo:'100'}};
+  applySavedRequest({id:null,data:demos[num],result:null,updatedAt:new Date().toISOString()}); calcularEdad(); calcularObjetivo(); alert('Caso demo cargado.'); calcularResultados(); }
+function resetWithoutConfirm(){ document.querySelectorAll('input,select,textarea').forEach(el=>{ if(el.type==='checkbox'||el.type==='radio') el.checked=false; else el.value=''; }); document.getElementById('fecha_solicitud').value=new Date().toISOString().slice(0,10); }
+
+function getRequests(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.requests)||'[]').filter(r=>!r.isDemo); }
+function renderDashboard(){ const reqs=getRequests(); const est=document.getElementById('filter_estado').value, esp=document.getElementById('filter_especialidad').value, elg=document.getElementById('filter_elegibilidad').value, q=document.getElementById('filter_search').value.toLowerCase();
+  const specialties=[...new Set(reqs.map(r=>r.data?.medico_especialidad).filter(Boolean))]; document.getElementById('filter_especialidad').innerHTML='<option value="">Especialidad (todas)</option>'+specialties.map(s=>`<option ${s===esp?'selected':''}>${s}</option>`).join('');
+  const f=reqs.filter(r=>(!est||r.estado===est)&&(!esp||r.data?.medico_especialidad===esp)&&(!elg||(r.result?.decision||'')===elg)&&(!q||`${r.data?.paciente_nombre||''} ${r.data?.paciente_nuhsa||''}`.toLowerCase().includes(q)));
+  document.getElementById('dashboard_kpi').innerHTML=`<div class="kpi-card"><strong>Total solicitudes</strong><div>${reqs.length}</div></div><div class="kpi-card"><strong>Borradores</strong><div>${reqs.filter(r=>r.estado==='borrador').length}</div></div><div class="kpi-card"><strong>Elegibles</strong><div>${reqs.filter(r=>r.result?.decision==='Elegible').length}</div></div><div class="kpi-card"><strong>No elegibles</strong><div>${reqs.filter(r=>r.result?.decision==='No elegible').length}</div></div>`;
+  document.getElementById('dashboard_rows').innerHTML=f.map(r=>`<tr><td>${new Date(r.updatedAt).toLocaleDateString('es-ES')}</td><td>${r.data?.paciente_nombre||''}</td><td>${r.data?.paciente_nuhsa||''}</td><td>${r.data?.medico_nombre||''}</td><td>${r.data?.medico_especialidad||''}</td><td>${r.data?.tipo_prevencion||''}</td><td>${r.data?.ldl_actual||''}</td><td>${r.result?.decision||'Pendiente'}</td><td>${r.estado}</td><td><button class='btn btn-secondary' onclick='openRequest("${r.id}")'>Abrir</button> <button class='btn btn-info' onclick='duplicateRequest("${r.id}")'>Duplicar</button> <button class='btn btn-success' onclick='exportRequestPdf("${r.id}")'>PDF</button> <button class='btn btn-danger' onclick='deleteRequest("${r.id}")'>Eliminar</button></td></tr>`).join('')||'<tr><td colspan="10">Sin solicitudes guardadas.</td></tr>';
+}
+function openRequest(id){ const r=getRequests().find(x=>x.id===id); if(!r) return; applySavedRequest(r); activateTab('solicitante'); }
+function duplicateRequest(id){ const all=getRequests(); const r=all.find(x=>x.id===id); if(!r) return; const copy=structuredClone(r); copy.id=crypto.randomUUID(); copy.estado='borrador'; copy.updatedAt=new Date().toISOString(); all.unshift(copy); localStorage.setItem(STORAGE_KEYS.requests,JSON.stringify(all)); renderDashboard(); }
+async function exportRequestPdf(id){ const r=getRequests().find(x=>x.id===id); if(!r) return; const prevData=getFormData(), prevRes=currentResults; applySavedRequest(r); await downloadPdf(); applySavedRequest({id:currentRequestId,data:prevData,result:prevRes,updatedAt:new Date().toISOString()}); }
+function deleteRequest(id){ if(!confirm('¿Eliminar solicitud local?')) return; const all=getRequests().filter(r=>r.id!==id); localStorage.setItem(STORAGE_KEYS.requests,JSON.stringify(all)); renderDashboard(); }
+
+document.querySelectorAll('input,select,textarea').forEach(el=>{ el.addEventListener('change',()=>{ persistDraft(); updateCaseSummary(); runClinicalWarnings(); }); el.addEventListener('input',()=>{ updateCaseSummary(); }); });
+window.onload=()=>{ document.getElementById('fecha_solicitud').value=new Date().toISOString().slice(0,10); const d=localStorage.getItem(STORAGE_KEYS.draft); if(d) { applySavedRequest(JSON.parse(d)); } updateCaseSummary(); runClinicalWarnings(); renderDashboard(); updateProgress(); };
+</script>
 </body>
 </html>
